@@ -16,20 +16,6 @@ bool debug_flag = false;
 int screenWidth = 640;
 int screenHeight = 468;
 
-////Define an error callback
-//static void error_callback(int error, const char* description)
-//{
-//	fputs(description, stderr);
-//	_fgetchar();
-//}
-//
-////Define the key input callback
-//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-//{
-//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//		glfwSetWindowShouldClose(window, GL_TRUE);
-//}
-
 int main(void)
 {
 	////*Dungeon Generator Logic*////
