@@ -2,12 +2,14 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include "Room.h"
 #include <random>
 #include <time.h>
 #include <math.h>
 #include <iostream>
 #include <algorithm>
+#include <utility>
 
 extern bool debug_flag;
 
@@ -20,7 +22,10 @@ public:
 
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
+	const std::map<std::pair<int, int>, bool>& getTileMap()const { return tileMap; };
 	void seperateCellRectangles();
+	void markTileMap(Room& a);
+	void markAllTileMap();
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/
@@ -39,7 +44,7 @@ private:
 	int nDungeonSize;//Length/Width(in 'tiles') of the Dungeon. Area will be a square for simplicity.
 
 	/*tileMap used to indicate which 'tiles' of the Dungeon contain a tile. Use bool or int. Int may be useful to indicate the type of tile. 0 for empty. */
-	std::map<int[2], bool> tileMap;
+	std::map<std::pair<int, int>, bool> tileMap;	//maps if a point contains part of a cell of some kind.
 	std::vector<Room*> vRooms;	//keeps track of the rooms.
 };
 

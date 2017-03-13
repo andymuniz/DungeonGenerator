@@ -78,6 +78,8 @@ void Dungeon::GenerateDungeon()
 	////Steer the Cells away from each other to remove overlap.
 	seperateCellRectangles();
 
+	markAllTileMap();
+
 	////FillSmallCellGaps();
 	//DetermineRoomCells();
 
@@ -89,6 +91,7 @@ void Dungeon::GenerateDungeon()
 	//DetermineCorridors();
 }
 
+//Steers Cells away from each other, to remove overlap !!TODO: Check the rounding for bugs!!!!! IMPORTANT
 void Dungeon::seperateCellRectangles()
 {
 	int iterations = 0; //for debugging, remove later
@@ -103,9 +106,9 @@ void Dungeon::seperateCellRectangles()
 			iterations++;
 		}
 		touching = false;
-		for (int i = 0; i < vRooms.size(); i++) {
+		for (int i = 0; i < (int)vRooms.size(); i++) {
 			a = vRooms[i];
-			for (int j = i + 1; j < vRooms.size(); j++) { // for each pair of rooms (notice i+1)
+			for (int j = i + 1; j < (int)vRooms.size(); j++) { // for each pair of rooms (notice i+1)
 				b = vRooms[j];
 				if ((*a).overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
 					touching = true; // update the touching flag so the loop iterates again
@@ -130,5 +133,24 @@ void Dungeon::seperateCellRectangles()
 	} while (touching); // loop until no rectangles are touching
 	if (debug_flag) {
 		std::cout << "Out of Loop." << std::endl << "# of iterations: " << iterations << std::endl;
+	}
+}
+
+//Marks every (integer)coodinate residing in a Room in the tileMap
+void Dungeon::markTileMap(Room& a)
+{
+	int point[2] = { 0,0 };
+	for (int x = a.getLeft(); x <= a.getRight(); x++) {
+		for (int y = a.getBottom(); y <= a.getTop(); y++) {
+			tileMap[std::make_pair(x, y)] = true;
+		}
+	}
+}
+
+//Marks all the occupied tiles in the tileMap
+void Dungeon::markAllTileMap()
+{
+	for (auto& it : vRooms) {
+		markTileMap(*it);
 	}
 }

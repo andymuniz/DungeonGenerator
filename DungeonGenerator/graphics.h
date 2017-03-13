@@ -24,7 +24,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-static int draw(Dungeon* MyDungeon){
+static int draw(Dungeon* MyDungeon) {
 	//Set the error callback
 	glfwSetErrorCallback(error_callback);
 
@@ -80,25 +80,38 @@ static int draw(Dungeon* MyDungeon){
 		glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 		glLoadIdentity(); //Reset the drawing perspective
 
-						  //Draw every room
+		//Draw every room
 		for (auto& it : MyDungeon->getRooms()) {
 			glPushMatrix();
 			glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
-			glBegin(GL_QUADS); //Begin triangle coordinates
-
+			glBegin(GL_QUADS); //Begin quad coordinates
 			AABB box = it->getAABB();
 			float z = -180.f;
-
 			////Room Rectangle - draw counter-clockwise starting from LL corner.
 			//glColor3f(1, 0, 0);
 			glVertex3d(box.LL[0], box.LL[1], z);
 			glVertex3d(box.LR[0], box.LR[1], z);
 			glVertex3d(box.UR[0], box.UR[1], z);
 			glVertex3d(box.UL[0], box.UL[1], z);
-
-			glEnd(); //End triangle coordinates
+			glEnd(); //End quad coordinates
 			glPopMatrix();
 		}
+
+		/*Testing the TileMap...Works! Leaving here for reference.*/
+		//for (auto& it : MyDungeon->getTileMap()) {
+		//	glPushMatrix();
+		//	glTranslatef(it.first.first, it.first.second, 0.f);
+		//	glBegin(GL_QUADS); //Begin quad coordinates
+		//	float z = -180.f;
+		//	////Room Rectangle - draw counter-clockwise starting from LL corner.
+		//	//glColor3f(1, 0, 0);
+		//	glVertex3d(-1.f, -1.f, z);
+		//	glVertex3d(1.f, -1.f, z);
+		//	glVertex3d(1.f, 1.f, z);
+		//	glVertex3d(-1.f, 1.f, z);
+		//	glEnd(); //End quad coordinates
+		//	glPopMatrix();
+		//}
 
 		//Swap buffers
 		glfwSwapBuffers(window);
