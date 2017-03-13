@@ -24,9 +24,10 @@ public:
 	void setHalfEdgeSizes() { nHalfWidth = nWidth / 2; nHalfHeight = nHeight / 2; };
 	void setAABB();		//calculates and sets the AABB based on position and edge sizes
 	const int* getPosition() const { return vPosition; };
-	const int getHeight() const { return nHeight; };
-	const int getWidth() const { return nWidth; };
+	const int& getHeight() const { return nHeight; };
+	const int& getWidth() const { return nWidth; };
 	const AABB& getAABB() const { return sAABB; };
+	bool isTrueRoom() { return bTrueRoom; };
 
 	//Get Boundaries, single x or y value for calculations.
 	const int getTop() const;
@@ -34,10 +35,8 @@ public:
 	const int getLeft() const;
 	const int getRight() const;
 
-	const bool isTrueRoom() const { return bTrueRoom; };
-
 	bool overlaps(const Room& B, int padding = 0) const;	//True if this room (A) overlaps with Room B
-	void markIfTrueRoom(int minWidth, int minHeight);
+	void markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
 
 
 private:

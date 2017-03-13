@@ -12,8 +12,9 @@ Dungeon::Dungeon()
 	this->fMinRoomSizeRatio = 0.5f;
 	this->fMinRoomSizeRatio = 1.5f;
 	this->nMaxRoomEdgeSize = 15;
-	this->nMinRoomEdgeHeight = 7;
-	this->nMinRoomEdgeWidth = 7;
+	//Change these constraints to get more or less TRUE rooms!
+	this->nMinRoomEdgeHeight = 9;
+	this->nMinRoomEdgeWidth = 9;
 
 	this->nDungeonSize = 100;
 }
@@ -79,6 +80,7 @@ void Dungeon::GenerateDungeon()
 	seperateCellRectangles();
 
 	markAllTileMap();
+	markTrueRooms();
 
 	////FillSmallCellGaps();
 	//DetermineRoomCells();
@@ -155,9 +157,9 @@ void Dungeon::markAllTileMap()
 	}
 }
 
-void Dungeon::markTrueRooms(int minWidth, int minHeight)
+void Dungeon::markTrueRooms()
 {
 	for (auto& it : vRooms) {
-		it->markIfTrueRoom(minWidth, minHeight);
+		it->markIfTrueRoom(nMinRoomEdgeWidth, nMinRoomEdgeHeight);
 	}
 }

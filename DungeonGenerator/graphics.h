@@ -88,12 +88,12 @@ static int draw(Dungeon* MyDungeon) {
 			AABB box = it->getAABB();
 			float z = -180.f;
 			////Room Rectangle - draw counter-clockwise starting from LL corner.
-			/*if (it->isTrueRoom() == true) {
+			if (it->isTrueRoom()) {
 				glColor3f(1, 0, 0);
 			}
 			else {
 				glColor3f(1, 1, 1);
-			}*/
+			}
 
 			glVertex3d(box.LL[0], box.LL[1], z);
 			glVertex3d(box.LR[0], box.LR[1], z);

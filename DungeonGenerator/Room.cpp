@@ -70,5 +70,5 @@ bool Room::overlaps(const Room& b, int padding) const
 void Room::markIfTrueRoom(int minWidth, int minHeight)
 {
 	if (nWidth >= minWidth && nHeight >= minHeight)
-		bTrueRoom = true;
+		this->bTrueRoom = true;
 }

@@ -26,7 +26,7 @@ public:
 	void seperateCellRectangles();
 	void markTileMap(Room& a);
 	void markAllTileMap();
-	void markTrueRooms(int minWidth, int minHeight);
+	void markTrueRooms();
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/
