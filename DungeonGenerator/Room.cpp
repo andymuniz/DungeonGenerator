@@ -10,6 +10,12 @@ Room::~Room()
 {
 }
 
+void Room::shift(int dx, int dy)
+{
+	vPosition[0] += dx; vPosition[1] += dy;
+	setAABB();
+}
+
 /*
 Since we're using a grid system, all edges are even for room, and all positions are integers, we are working
 with even whole numbers, making this really easy to do. IDK if this will need to be changed in the future,
@@ -54,8 +60,8 @@ const int Room::getRight() const
 bool Room::overlaps(const Room& b, int padding) const
 {
 	auto a = this;
-	return !(b.getLeft() - padding > a->getRight() ||
-		b.getRight() < a->getLeft() - padding ||
-		b.getTop() < a->getBottom() - padding ||
-		b.getBottom() - padding > a->getTop());
+	return !(b.getLeft() - padding >= a->getRight() ||
+		b.getRight() <= a->getLeft() - padding ||
+		b.getTop() <= a->getBottom() - padding ||
+		b.getBottom() - padding >= a->getTop());
 }

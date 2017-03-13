@@ -7,6 +7,7 @@
 #include <time.h>
 #include <math.h>
 #include <iostream>
+#include <algorithm>
 
 extern bool debug_flag;
 
@@ -19,6 +20,7 @@ public:
 
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
+	void seperateCellRectangles();
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/

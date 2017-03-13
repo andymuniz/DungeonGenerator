@@ -87,7 +87,7 @@ static int draw(Dungeon* MyDungeon){
 			glBegin(GL_QUADS); //Begin triangle coordinates
 
 			AABB box = it->getAABB();
-			float z = -150.0f;
+			float z = -180.f;
 
 			////Room Rectangle - draw counter-clockwise starting from LL corner.
 			//glColor3f(1, 0, 0);

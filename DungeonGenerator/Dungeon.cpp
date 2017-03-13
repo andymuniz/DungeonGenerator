@@ -75,9 +75,9 @@ void Dungeon::GenerateDungeon()
 			it->setAABB();
 		}
 	}
-
 	////Steer the Cells away from each other to remove overlap.
-	//SeperateCellRectangles();
+	seperateCellRectangles();
+
 	////FillSmallCellGaps();
 	//DetermineRoomCells();
 
@@ -87,4 +87,48 @@ void Dungeon::GenerateDungeon()
 	//AddLoopsToMST();
 
 	//DetermineCorridors();
+}
+
+void Dungeon::seperateCellRectangles()
+{
+	int iterations = 0; //for debugging, remove later
+	int padding = 0;
+	Room* a;
+	Room* b; // to hold any two rooms that are over lapping
+	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
+	bool touching; // a boolean flag to keep track of touching rooms
+	do {
+		if (debug_flag) {
+			std::cout << "Starting " << "# of iteration: " << iterations << std::endl;
+			iterations++;
+		}
+		touching = false;
+		for (int i = 0; i < vRooms.size(); i++) {
+			a = vRooms[i];
+			for (int j = i + 1; j < vRooms.size(); j++) { // for each pair of rooms (notice i+1)
+				b = vRooms[j];
+				if ((*a).overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
+					touching = true; // update the touching flag so the loop iterates again
+					// find the two smallest deltas required to stop the overlap
+					dx = std::min((*a).getRight() - (*b).getLeft() + padding, (*a).getLeft() - (*b).getRight() - padding);
+					dy = std::min((*a).getBottom() - (*b).getTop() + padding, (*a).getTop() - (*b).getBottom() - padding);
+					// only keep the smalled delta
+					if (std::abs(dx) < std::abs(dy)) dy = 0;
+					else dx = 0;
+					// create a delta for each rectangle as half the whole delta.
+					dxa = -dx / 2;
+					dxb = dx + dxa;
+					// same for y
+					dya = -dy / 2;
+					dyb = dy + dya;
+					// shift both rectangles
+					(*a).shift(dxa, dya);
+					(*b).shift(dxb, dyb);
+				}
+			}
+		}
+	} while (touching); // loop until no rectangles are touching
+	if (debug_flag) {
+		std::cout << "Out of Loop." << std::endl << "# of iterations: " << iterations << std::endl;
+	}
 }

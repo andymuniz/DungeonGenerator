@@ -16,6 +16,8 @@ public:
 	Room(int x, int y, int z = -5);
 	~Room();
 
+	void shift(int dx, int dy);
+
 	//Getters&Setters
 	void setPosition(int x, int y) { vPosition[0] = x; vPosition[1] = y; };
 	void setEdgeSizes(int height, int width) { nHeight = height; nWidth = width; setHalfEdgeSizes(); };
