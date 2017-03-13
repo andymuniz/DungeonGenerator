@@ -26,6 +26,7 @@ public:
 	void seperateCellRectangles();
 	void markTileMap(Room& a);
 	void markAllTileMap();
+	void markTrueRooms(int minWidth, int minHeight);
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/
@@ -38,7 +39,7 @@ private:
 	int nMaxRoomEdgeSize;
 	float fMinRoomSizeRatio;
 	float fMaxRoomSizeRatio;
-	int nMinRoomEdgeLength;
+	int nMinRoomEdgeHeight;
 	int nMinRoomEdgeWidth;
 
 	int nDungeonSize;//Length/Width(in 'tiles') of the Dungeon. Area will be a square for simplicity.

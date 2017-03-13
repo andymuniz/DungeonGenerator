@@ -12,7 +12,7 @@ Dungeon::Dungeon()
 	this->fMinRoomSizeRatio = 0.5f;
 	this->fMinRoomSizeRatio = 1.5f;
 	this->nMaxRoomEdgeSize = 15;
-	this->nMinRoomEdgeLength = 7;
+	this->nMinRoomEdgeHeight = 7;
 	this->nMinRoomEdgeWidth = 7;
 
 	this->nDungeonSize = 100;
@@ -113,10 +113,10 @@ void Dungeon::seperateCellRectangles()
 				if ((*a).overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
 					touching = true; // update the touching flag so the loop iterates again
 					// find the two smallest deltas required to stop the overlap
-					dx = std::min((*a).getRight() - (*b).getLeft() + padding, (*a).getLeft() - (*b).getRight() - padding);
-					dy = std::min((*a).getBottom() - (*b).getTop() + padding, (*a).getTop() - (*b).getBottom() - padding);
+					dx = std::min(abs((*a).getRight() - (*b).getLeft() + padding), abs((*a).getLeft() - (*b).getRight() - padding));
+					dy = std::min(abs((*a).getBottom() - (*b).getTop() + padding), abs((*a).getTop() - (*b).getBottom() - padding));
 					// only keep the smalled delta
-					if (std::abs(dx) < std::abs(dy)) dy = 0;
+					if (abs(dx) < abs(dy)) dy = 0;
 					else dx = 0;
 					// create a delta for each rectangle as half the whole delta.
 					dxa = -dx / 2;
@@ -152,5 +152,12 @@ void Dungeon::markAllTileMap()
 {
 	for (auto& it : vRooms) {
 		markTileMap(*it);
+	}
+}
+
+void Dungeon::markTrueRooms(int minWidth, int minHeight)
+{
+	for (auto& it : vRooms) {
+		it->markIfTrueRoom(minWidth, minHeight);
 	}
 }

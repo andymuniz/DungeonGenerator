@@ -2,8 +2,9 @@
 
 Room::Room(int x, int y, int z)
 {
-	vPosition[2] = z;
-	setPosition(x, y);
+	this->vPosition[2] = z;
+	this->setPosition(x, y);
+	this->bTrueRoom = false;
 }
 
 Room::~Room()
@@ -12,8 +13,8 @@ Room::~Room()
 
 void Room::shift(int dx, int dy)
 {
-	vPosition[0] += dx; vPosition[1] += dy;
-	setAABB();
+	this->vPosition[0] += dx; this->vPosition[1] += dy;
+	this->setAABB();
 }
 
 /*
@@ -64,4 +65,10 @@ bool Room::overlaps(const Room& b, int padding) const
 		b.getRight() <= a->getLeft() - padding ||
 		b.getTop() <= a->getBottom() - padding ||
 		b.getBottom() - padding >= a->getTop());
+}
+
+void Room::markIfTrueRoom(int minWidth, int minHeight)
+{
+	if (nWidth >= minWidth && nHeight >= minHeight)
+		bTrueRoom = true;
 }

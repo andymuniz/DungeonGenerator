@@ -34,7 +34,10 @@ public:
 	const int getLeft() const;
 	const int getRight() const;
 
+	const bool isTrueRoom() const { return bTrueRoom; };
+
 	bool overlaps(const Room& B, int padding = 0) const;	//True if this room (A) overlaps with Room B
+	void markIfTrueRoom(int minWidth, int minHeight);
 
 
 private:
@@ -44,6 +47,7 @@ private:
 	int nHalfWidth = 0;
 	int nHalfHeight = 0;
 	float RoomSizeRatio;
+	bool bTrueRoom;
 	AABB sAABB;
 };
 
