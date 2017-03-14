@@ -63,14 +63,14 @@ static int draw(Dungeon* MyDungeon) {
 	//Tell OpenGL how to convert from coordinates to pixel values
 	glViewport(0, 0, screenWidth, screenHeight);
 	glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
-								 //Set the camera perspective
+	//Set the camera perspective
 	glLoadIdentity(); //reset the camera
 	gluPerspective(45.0f,                      //camera angle
 		(GLfloat)screenWidth / (GLfloat)screenHeight, //The width to height ratio
 		1.0f,                          //The near z clipping coordinate
 		200.0f);                       //The far z clipping coordinate
 
-									   //Set a background color
+	//Set a background color
 	glClearColor(0.0f, 0.0f, 0.15f, 0.0f);
 	//Main OpenGL Loop
 	do
@@ -87,9 +87,13 @@ static int draw(Dungeon* MyDungeon) {
 			glBegin(GL_QUADS); //Begin quad coordinates
 			AABB box = it->getAABB();
 			float z = -180.f;
+
 			////Room Rectangle - draw counter-clockwise starting from LL corner.
 			if (it->isTrueRoom()) {
 				glColor3f(1, 0, 0);
+			}
+			else if (it->isFillerCell()) {
+				glColor3f(0, 1, 0);
 			}
 			else {
 				glColor3f(1, 1, 1);
@@ -100,6 +104,7 @@ static int draw(Dungeon* MyDungeon) {
 			glVertex3d(box.UR[0], box.UR[1], z);
 			glVertex3d(box.UL[0], box.UL[1], z);
 			glEnd(); //End quad coordinates
+
 			glPopMatrix();
 		}
 

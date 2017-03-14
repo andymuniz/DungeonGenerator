@@ -23,10 +23,14 @@ public:
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
 	const std::map<std::pair<int, int>, bool>& getTileMap()const { return tileMap; };
+
+	void generateCellCoordinates();
+	void generateCellRectangles();
 	void seperateCellRectangles();
 	void markTileMap(Room& a);
 	void markAllTileMap();
 	void markTrueRooms();
+	void fillSmallCellGaps();
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/

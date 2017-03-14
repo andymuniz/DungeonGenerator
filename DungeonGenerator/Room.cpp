@@ -4,7 +4,17 @@ Room::Room(int x, int y, int z)
 {
 	this->vPosition[2] = z;
 	this->setPosition(x, y);
+	this->bTrueRoom = bFillerCell = false;
+}
+
+Room::Room(std::pair<int, int> pos, int z)
+{
+	this->vPosition[2] = z;
+	this->setPosition(pos.first, pos.second);
 	this->bTrueRoom = false;
+	this->setEdgeSizes(2, 2); //set to (2,2) or greater for some interesting results. like an island lol.
+	this->setAABB();
+	bFillerCell = true;
 }
 
 Room::~Room()
