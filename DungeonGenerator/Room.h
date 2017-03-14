@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <iostream>
 
 extern bool debug_flag;
 
@@ -44,8 +45,8 @@ private:
 	int vPosition[3];	//x,y, and z but z not used
 	int nHeight;
 	int nWidth;
-	float nHalfWidth = 0;
-	float nHalfHeight = 0;
+	int nHalfWidth = 0;
+	int nHalfHeight = 0;
 	float RoomSizeRatio;
 	bool bTrueRoom;
 	bool bFillerCell;

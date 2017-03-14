@@ -9,12 +9,18 @@ Room::Room(int x, int y, int z)
 
 Room::Room(std::pair<int, int> pos, int z)
 {
-	this->vPosition[2] = z;
+	this->vPosition[2] = -5;
 	this->setPosition(pos.first, pos.second);
 	this->bTrueRoom = false;
-	this->setEdgeSizes(2, 2); //set to (2,2) or greater for some interesting results. like an island lol.
+	this->setEdgeSizes(2, 2);
+
 	this->setAABB();
 	bFillerCell = true;
+	//std::cout << "Filler Position: (" << vPosition[0] << ", " << vPosition[1] << ")" << std::endl;
+	//std::cout << "LL: (" << sAABB.LL[0] << ", " << sAABB.LL[1] << ")" << std::endl;
+	//std::cout << "LR: (" << sAABB.LR[0] << ", " << sAABB.LR[1] << ")" << std::endl;
+	//std::cout << "UR: (" << sAABB.UR[0] << ", " << sAABB.UR[1] << ")" << std::endl;
+	//std::cout << "UL: (" << sAABB.UL[0] << ", " << sAABB.UL[1] << ")" << std::endl << std::endl;
 }
 
 Room::~Room()
@@ -36,8 +42,8 @@ but this is an easy way to save hassle.
 //The true origin should be the Position
 void Room::setAABB()
 {
-	nHalfWidth = nWidth / 2;
-	nHalfHeight = nHeight / 2;
+	//nHalfWidth = nWidth / 2.f;
+	//nHalfHeight = nHeight / 2.f;
 	this->sAABB.LL[0] = 0 - nHalfWidth;
 	this->sAABB.LL[1] = 0 - nHalfHeight;
 	this->sAABB.LR[0] = 0 + nHalfWidth;

@@ -36,7 +36,7 @@ void Dungeon::GenerateDungeon()
 	markAllTileMap();
 	markTrueRooms();
 
-	fillSmallCellGaps();
+	//fillSmallCellGaps();
 
 	/////Graphs
 	//ConstructRoomDelaunayGraph();
@@ -169,52 +169,115 @@ void Dungeon::markTrueRooms()
 	}
 }
 
-//checks each existing coordinate for any 1x1 gaps around it, then creates a 1x1 room at those spots
+/*
+Another algorithm:
+Get a set of 4 points to define a square and traverse through the grid. If each point is in the tilemap but there is no
+*/
+
+//checks each existing coordinate for any 1x1 gaps around it, then creates a 2x2 room at those spots...not perfect
+//!!Checked 2 cells away for existing, but forgot to check 1 cell away for empty...
+//So..check 1 cell away for existing, if empty check 2 cells away for existing
 void Dungeon::fillSmallCellGaps()
 {
 	std::pair<int, int> point;	//original point we will center on
 	for (auto& it : this->tileMap) {
 		point = it.first;
-		std::pair<int, int> point2;	//will hold a point to check if a cell exists two cells away
+		std::pair<int, int> point2, point3;	//will hold a point to check if a cell exists two cells away
 		//Check for gap above
-		point2 = std::make_pair(point.first, point.second + 2);
+		point2 = std::make_pair(point.first, point.second + 1);
+		point3 = std::make_pair(point2.first, point2.second + 1);
 		if (this->tileMap.find(point2) == this->tileMap.end()) {
-			//point doesn't exist so no gap. Do nothing.
+			//point doesn't exist so check for a point 1 further to veryify a gap.
+			if (this->tileMap.find(point3) != this->tileMap.end()) {
+				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+				markTileMap(*vRooms.back());
+			}
 		}
 		else {
-			//point exists, so gap exists
-			point2.second--;
-			this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+			//point exists, so no gap exists
 		}
 		//Check for gap below
-		point2 = std::make_pair(point.first, point.second - 2);
+		point2 = std::make_pair(point.first, point.second - 1);
+		point3 = std::make_pair(point2.first, point2.second - 1);
 		if (this->tileMap.find(point2) == this->tileMap.end()) {
-			//point doesn't exist so no gap. Do nothing.
+			//point doesn't exist so check for a point 1 further to veryify a gap.
+			if (this->tileMap.find(point3) != this->tileMap.end()) {
+				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+				markTileMap(*vRooms.back());
+			}
 		}
 		else {
-			//point exists, so gap exists
-			point2.second++;;
-			this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+			//point exists, so no gap exists
 		}
 		//Check for gap to left
-		point2 = std::make_pair(point.first - 2, point.second);
+		point2 = std::make_pair(point.first - 1, point.second);
+		point3 = std::make_pair(point2.first - 1, point2.second);
 		if (this->tileMap.find(point2) == this->tileMap.end()) {
-			//point doesn't exist so no gap. Do nothing.
+			//point doesn't exist so check for a point 1 further to veryify a gap.
+			if (this->tileMap.find(point3) != this->tileMap.end()) {
+				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+				markTileMap(*vRooms.back());
+			}
 		}
 		else {
-			//point exists, so gap exists
-			point2.first++;;
-			this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+			//point exists, so no gap exists
 		}
 		//Check for gap to right
-		point2 = std::make_pair(point.first + 2, point.second);
+		point2 = std::make_pair(point.first + 1, point.second);
+		point3 = std::make_pair(point2.first + 1, point2.second);
 		if (this->tileMap.find(point2) == this->tileMap.end()) {
-			//point doesn't exist so no gap. Do nothing.
+			//point doesn't exist so check for a point 1 further to veryify a gap.
+			if (this->tileMap.find(point3) != this->tileMap.end()) {
+				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+				markTileMap(*vRooms.back());
+			}
 		}
 		else {
-			//point exists, so gap exists
-			point2.first--;;
-			this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+			//point exists, so no gap exists
 		}
+
+		/*Reverse process creates rounded cavelike/islandlike structure*/
+		//point = it.first;
+		//std::pair<int, int> point2;	//will hold a point to check if a cell exists two cells away
+		////Check for gap above
+		//point2 = std::make_pair(point.first, point.second + 2);
+		//if (this->tileMap.find(point2) == this->tileMap.end()) {
+		//	//point doesn't exist so no gap. Do nothing.
+		//}
+		//else {
+		//	//point exists, so gap exists
+		//	point2.second--;
+		//	this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+		//}
+		////Check for gap below
+		//point2 = std::make_pair(point.first, point.second - 2);
+		//if (this->tileMap.find(point2) == this->tileMap.end()) {
+		//	//point doesn't exist so no gap. Do nothing.
+		//}
+		//else {
+		//	//point exists, so gap exists
+		//	point2.second++;;
+		//	this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+		//}
+		////Check for gap to left
+		//point2 = std::make_pair(point.first - 2, point.second);
+		//if (this->tileMap.find(point2) == this->tileMap.end()) {
+		//	//point doesn't exist so no gap. Do nothing.
+		//}
+		//else {
+		//	//point exists, so gap exists
+		//	point2.first++;;
+		//	this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+		//}
+		////Check for gap to right
+		//point2 = std::make_pair(point.first + 2, point.second);
+		//if (this->tileMap.find(point2) == this->tileMap.end()) {
+		//	//point doesn't exist so no gap. Do nothing.
+		//}
+		//else {
+		//	//point exists, so gap exists
+		//	point2.first--;;
+		//	this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
+		//}
 	}
 }
