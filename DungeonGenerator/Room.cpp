@@ -7,12 +7,14 @@ Room::Room(int x, int y, int z)
 	this->bTrueRoom = bFillerCell = false;
 }
 
-Room::Room(std::pair<int, int> pos, int z)
+Room::Room(std::pair<float, float> pos, int z)
 {
 	this->vPosition[2] = -5;
-	this->setPosition(pos.first, pos.second);
+	//this->setPosition(pos.first, pos.second);
+	vPosition[0] = pos.first;
+	vPosition[1] = pos.second;
 	this->bTrueRoom = false;
-	this->setEdgeSizes(2, 2);
+	this->setEdgeSizes(1, 1);
 
 	this->setAABB();
 	bFillerCell = true;

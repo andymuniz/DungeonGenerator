@@ -36,7 +36,7 @@ void Dungeon::GenerateDungeon()
 	markAllTileMap();
 	markTrueRooms();
 
-	//fillSmallCellGaps();
+	fillSmallCellGaps();
 
 	/////Graphs
 	//ConstructRoomDelaunayGraph();
@@ -144,11 +144,12 @@ void Dungeon::seperateCellRectangles()
 }
 
 //Marks every (integer)coodinate residing in a Room in the tileMap
+//Stores the coordinate of the "center" of each 1x1 "pixel" in every room.
 void Dungeon::markTileMap(Room& a)
 {
-	for (int x = a.getLeft(); x <= a.getRight(); x++) {
-		for (int y = a.getBottom(); y <= a.getTop(); y++) {
-			tileMap[std::make_pair(x, y)] = true;
+	for (int x = a.getLeft(); x < a.getRight(); x++) {
+		for (int y = a.getBottom(); y < a.getTop(); y++) {
+			tileMap[std::make_pair(x + 0.5f, y + 0.5f)] = true;	//add a small offset to get the center and not the corner of pixel
 		}
 	}
 }
@@ -169,20 +170,13 @@ void Dungeon::markTrueRooms()
 	}
 }
 
-/*
-Another algorithm:
-Get a set of 4 points to define a square and traverse through the grid. If each point is in the tilemap but there is no
-*/
-
-//checks each existing coordinate for any 1x1 gaps around it, then creates a 2x2 room at those spots...not perfect
-//!!Checked 2 cells away for existing, but forgot to check 1 cell away for empty...
-//So..check 1 cell away for existing, if empty check 2 cells away for existing
+//checks each existing coordinate for any 1x1 gaps around it, then creates a 1x1 room at that location
 void Dungeon::fillSmallCellGaps()
 {
-	std::pair<int, int> point;	//original point we will center on
+	std::pair<float, float> point;	//original point we will center on
 	for (auto& it : this->tileMap) {
 		point = it.first;
-		std::pair<int, int> point2, point3;	//will hold a point to check if a cell exists two cells away
+		std::pair<float, float> point2, point3;	//will hold a point to check if a cell exists two cells away
 		//Check for gap above
 		point2 = std::make_pair(point.first, point.second + 1);
 		point3 = std::make_pair(point2.first, point2.second + 1);

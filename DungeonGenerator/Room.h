@@ -6,25 +6,25 @@ extern bool debug_flag;
 
 //Axis-Aligned Bounding Box
 typedef struct AABB {
-	int LL[2];	//Lower-left corner
-	int LR[2];	//Lower-right corner
-	int UR[2];	//Upper-right corner
-	int UL[2];	//Upper-left corner
+	float LL[2];	//Lower-left corner
+	float LR[2];	//Lower-right corner
+	float UR[2];	//Upper-right corner
+	float UL[2];	//Upper-left corner
 }AABB;
 
 class Room
 {
 public:
 	Room(int x, int y, int z = -5);
-	Room(std::pair<int, int> pos, int z = -5);
+	Room(std::pair<float, float> pos, int z = -5);
 	~Room();
 
 	//Getters&Setters
 	void setPosition(int x, int y) { vPosition[0] = x; vPosition[1] = y; };
 	void setEdgeSizes(int height, int width) { nHeight = height; nWidth = width; setHalfEdgeSizes(); };
-	void setHalfEdgeSizes() { nHalfWidth = nWidth / 2; nHalfHeight = nHeight / 2; };
+	void setHalfEdgeSizes() { nHalfWidth = nWidth / 2.f; nHalfHeight = nHeight / 2.f; };
 	void setAABB();		//calculates and sets the AABB based on position and edge sizes
-	const int* getPosition() const { return vPosition; };
+	const float* getPosition() const { return vPosition; };
 	const int& getHeight() const { return nHeight; };
 	const int& getWidth() const { return nWidth; };
 	const AABB& getAABB() const { return sAABB; };
@@ -42,11 +42,11 @@ public:
 	void markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
 
 private:
-	int vPosition[3];	//x,y, and z but z not used
+	float vPosition[3];	//x,y, and z but z not used
 	int nHeight;
 	int nWidth;
-	int nHalfWidth = 0;
-	int nHalfHeight = 0;
+	float nHalfWidth = 0;
+	float nHalfHeight = 0;
 	float RoomSizeRatio;
 	bool bTrueRoom;
 	bool bFillerCell;
