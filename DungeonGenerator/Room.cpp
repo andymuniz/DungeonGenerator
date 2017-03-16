@@ -7,6 +7,7 @@ Room::Room(int x, int y, int z)
 	this->bTrueRoom = bFillerCell = false;
 }
 
+//This constructor is only used when filling gaps in Dungeon Generation..keep in mind
 Room::Room(std::pair<float, float> pos, int z)
 {
 	this->vPosition[2] = -5;
@@ -85,8 +86,11 @@ bool Room::overlaps(const Room& b, int padding) const
 		b.getBottom() - padding >= a->getTop());
 }
 
-void Room::markIfTrueRoom(int minWidth, int minHeight)
+bool Room::markIfTrueRoom(int minWidth, int minHeight)
 {
-	if (nWidth >= minWidth && nHeight >= minHeight)
-		this->bTrueRoom = true;
+	if (nWidth >= minWidth && nHeight >= minHeight) {
+		return (this->bTrueRoom = true);
+		//return true;
+	}
+	return false;
 }

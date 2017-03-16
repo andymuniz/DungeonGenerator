@@ -39,7 +39,7 @@ public:
 
 	void shift(int dx, int dy);	//move room by a delta x and delta y amount
 	bool overlaps(const Room& B, int padding = 0) const;	//True if this room (A) overlaps with Room B
-	void markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
+	bool markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
 
 private:
 	float vPosition[3];	//x,y, and z but z not used
