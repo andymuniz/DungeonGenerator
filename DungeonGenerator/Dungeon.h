@@ -22,6 +22,7 @@ public:
 
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
+	const std::map<Room*, std::vector<Room*>>& getGraph()const { return graph; };
 	const std::map < std::pair<float, float >, bool > & getTileMap()const { return tileMap; };
 
 	void generateCellCoordinates();

@@ -14,7 +14,7 @@ Dungeon::Dungeon()
 	this->nMaxRoomEdgeSize = 15;
 	//Change these constraints to get more or less TRUE rooms!
 	this->nMinRoomEdgeHeight = 8;
-	this->nMinRoomEdgeWidth = 8;
+	this->nMinRoomEdgeWidth = 9;
 
 	this->nDungeonSize = 100;
 }
@@ -50,19 +50,19 @@ void Dungeon::GenerateDungeon()
 		double abDist, acDist, bcDist;
 		bool skip;
 		for (int i = 0; i < vTrueRooms.size(); i++) {
-			a = vTrueRooms.get(i);
+			a = vTrueRooms[i];
 			for (int j = i + 1; j < vTrueRooms.size(); j++) { // for each pair of rooms
 				skip = false;
-				b = vTrueRooms.get(j);
+				b = vTrueRooms[j];
 				// get the sqrd distance between a and b
-				abDist = Math.pow(a.getCenterX() - b.getCenterX(), 2) + Math.pow(a.getCenterY() - b.getCenterY(), 2);
+				abDist = pow(a->getPosition()[0] - b->getPosition()[0], 2) + pow(a->getPosition()[1] - b->getPosition()[1], 2);
 				for (int k = 0; k < vTrueRooms.size(); k++) { // loop through all other rooms
 					if (k == i || k == j) // that are not a or b
 						continue;
-					c = vTrueRooms.get(k);
+					c = vTrueRooms[k];
 					// get the other two applicable distances
-					acDist = Math.pow(a.getCenterX() - c.getCenterX(), 2) + Math.pow(a.getCenterY() - c.getCenterY(), 2);
-					bcDist = Math.pow(b.getCenterX() - c.getCenterX(), 2) + Math.pow(b.getCenterY() - c.getCenterY(), 2);
+					acDist = pow(a->getPosition()[0] - c->getPosition()[0], 2) + pow(a->getPosition()[1] - c->getPosition()[1], 2);
+					bcDist = pow(b->getPosition()[0] - c->getPosition()[0], 2) + pow(b->getPosition()[1] - c->getPosition()[1], 2);
 					// if the distance between a and c or b and c are smaller than a, the pairing of
 					// a and b is not a graph edge
 					if (acDist < abDist && bcDist < abDist)
@@ -72,8 +72,7 @@ void Dungeon::GenerateDungeon()
 				}
 				if (!skip) { // if this a and b pairing was never skipped, it should be an edge
 					if (graph.find(a) == graph.end())
-						graph[a] = new std::vector<Room*>;
-					//graph.put(a, new LinkedList());
+						graph[a] = std::vector<Room*>();
 					graph[a].push_back(b);
 				}
 			}

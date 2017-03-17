@@ -96,7 +96,7 @@ static int draw(Dungeon* MyDungeon) {
 				glColor3f(0, 1, 0);
 			}
 			else {
-				glColor3f(1, 1, 1);
+				glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
 			}
 
 			glVertex3d(box.LL[0], box.LL[1], z);
@@ -107,6 +107,26 @@ static int draw(Dungeon* MyDungeon) {
 
 			glPopMatrix();
 		}
+
+		{
+			//Draw Graph Edges
+			glLineWidth(3.5);
+			glColor3f(1, 1, 1);
+			glPushMatrix();
+			glTranslatef(-50.f, -50.f, 0.f);
+			glBegin(GL_LINES);
+			float z = -180.f;
+			for (auto& key : MyDungeon->getGraph()) {
+				for (auto& room : key.second) {
+					glVertex3f(key.first->getPosition()[0], key.first->getPosition()[1], z);
+					glVertex3f(room->getPosition()[0], room->getPosition()[1], z);
+				}
+			}
+			glEnd();
+
+			glPopMatrix();
+		}
+
 
 		/*Testing the TileMap...Works! Leaving here for reference.*/
 		//for (auto& it : MyDungeon->getTileMap()) {
