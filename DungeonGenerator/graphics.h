@@ -108,8 +108,24 @@ static int draw(Dungeon* MyDungeon) {
 			glPopMatrix();
 		}
 
+		/*Testing the TileMap...Works! Leaving here for reference.*/
+		//for (auto& it : MyDungeon->getTileMap()) {
+		//	glPushMatrix();
+		//	glTranslatef(it.first.first - 50.f, it.first.second - 50.f, 0.f);
+		//	glBegin(GL_QUADS); //Begin quad coordinates
+		//	float z = -180.f;
+		//	////Room Rectangle - draw counter-clockwise starting from LL corner.
+		//	glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+		//	glVertex3d(-1.f, -1.f, z);
+		//	glVertex3d(1.f, -1.f, z);
+		//	glVertex3d(1.f, 1.f, z);
+		//	glVertex3d(-1.f, 1.f, z);
+		//	glEnd(); //End quad coordinates
+		//	glPopMatrix();
+		//}
+
+		/*Draw Graph Edges */
 		{
-			//Draw Graph Edges
 			glLineWidth(3.5);
 			glColor3f(1, 1, 1);
 			glPushMatrix();
@@ -123,26 +139,8 @@ static int draw(Dungeon* MyDungeon) {
 				}
 			}
 			glEnd();
-
 			glPopMatrix();
 		}
-
-
-		/*Testing the TileMap...Works! Leaving here for reference.*/
-		//for (auto& it : MyDungeon->getTileMap()) {
-		//	glPushMatrix();
-		//	glTranslatef(it.first.first, it.first.second, 0.f);
-		//	glBegin(GL_QUADS); //Begin quad coordinates
-		//	float z = -180.f;
-		//	////Room Rectangle - draw counter-clockwise starting from LL corner.
-		//	//glColor3f(1, 0, 0);
-		//	glVertex3d(-1.f, -1.f, z);
-		//	glVertex3d(1.f, -1.f, z);
-		//	glVertex3d(1.f, 1.f, z);
-		//	glVertex3d(-1.f, 1.f, z);
-		//	glEnd(); //End quad coordinates
-		//	glPopMatrix();
-		//}
 
 		//Swap buffers
 		glfwSwapBuffers(window);

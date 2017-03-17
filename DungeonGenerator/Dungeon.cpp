@@ -13,7 +13,7 @@ Dungeon::Dungeon()
 	this->fMinRoomSizeRatio = 1.5f;
 	this->nMaxRoomEdgeSize = 15;
 	//Change these constraints to get more or less TRUE rooms!
-	this->nMinRoomEdgeHeight = 8;
+	this->nMinRoomEdgeHeight = 9;
 	this->nMinRoomEdgeWidth = 9;
 
 	this->nDungeonSize = 100;
@@ -29,59 +29,13 @@ void Dungeon::GenerateDungeon()
 	//-----Determine Cell Properties
 	generateCellCoordinates();
 	generateCellRectangles();
-
 	////Steer the Cells away from each other to remove overlap.
 	seperateCellRectangles();
-
 	markAllTileMap();
-
 	markTrueRooms();
-
 	fillSmallCellGaps();
-
-	/////Graphs
-	//ConstructRoomDelaunayGraph();
-	//ConstructRoomMST();
-	//AddLoopsToMST();
-
-	//constructGraph(); //construct a relative neighborhood graph 
-	{
-		Room *a, *b, *c;
-		double abDist, acDist, bcDist;
-		bool skip;
-		for (int i = 0; i < vTrueRooms.size(); i++) {
-			a = vTrueRooms[i];
-			for (int j = i + 1; j < vTrueRooms.size(); j++) { // for each pair of rooms
-				skip = false;
-				b = vTrueRooms[j];
-				// get the sqrd distance between a and b
-				abDist = pow(a->getPosition()[0] - b->getPosition()[0], 2) + pow(a->getPosition()[1] - b->getPosition()[1], 2);
-				for (int k = 0; k < vTrueRooms.size(); k++) { // loop through all other rooms
-					if (k == i || k == j) // that are not a or b
-						continue;
-					c = vTrueRooms[k];
-					// get the other two applicable distances
-					acDist = pow(a->getPosition()[0] - c->getPosition()[0], 2) + pow(a->getPosition()[1] - c->getPosition()[1], 2);
-					bcDist = pow(b->getPosition()[0] - c->getPosition()[0], 2) + pow(b->getPosition()[1] - c->getPosition()[1], 2);
-					// if the distance between a and c or b and c are smaller than a, the pairing of
-					// a and b is not a graph edge
-					if (acDist < abDist && bcDist < abDist)
-						skip = true;
-					if (skip) // so we break the loop and go to the next a and b paring
-						break;
-				}
-				if (!skip) { // if this a and b pairing was never skipped, it should be an edge
-					if (graph.find(a) == graph.end())
-						graph[a] = std::vector<Room*>();
-					graph[a].push_back(b);
-				}
-			}
-		}
-
-	}
-
-
-
+	/////Graph
+	constructGraph(); //construct a relative neighborhood graph 
 	//DetermineCorridors();
 }
 
@@ -315,4 +269,40 @@ void Dungeon::fillSmallCellGaps()
 		//	this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
 		//}
 	}
+}
+
+void Dungeon::constructGraph()
+{
+	Room *a, *b, *c;
+	double abDist, acDist, bcDist;
+	bool skip;
+	for (int i = 0; i < vTrueRooms.size(); i++) {
+		a = vTrueRooms[i];
+		for (int j = i + 1; j < vTrueRooms.size(); j++) { // for each pair of rooms
+			skip = false;
+			b = vTrueRooms[j];
+			// get the sqrd distance between a and b
+			abDist = pow(a->getPosition()[0] - b->getPosition()[0], 2) + pow(a->getPosition()[1] - b->getPosition()[1], 2);
+			for (int k = 0; k < vTrueRooms.size(); k++) { // loop through all other rooms
+				if (k == i || k == j) // that are not a or b
+					continue;
+				c = vTrueRooms[k];
+				// get the other two applicable distances
+				acDist = pow(a->getPosition()[0] - c->getPosition()[0], 2) + pow(a->getPosition()[1] - c->getPosition()[1], 2);
+				bcDist = pow(b->getPosition()[0] - c->getPosition()[0], 2) + pow(b->getPosition()[1] - c->getPosition()[1], 2);
+				// if the distance between a and c or b and c are smaller than a, the pairing of
+				// a and b is not a graph edge
+				if (acDist < abDist && bcDist < abDist)
+					skip = true;
+				if (skip) // so we break the loop and go to the next a and b paring
+					break;
+			}
+			if (!skip) { // if this a and b pairing was never skipped, it should be an edge
+				if (graph.find(a) == graph.end())
+					graph[a] = std::vector<Room*>();
+				graph[a].push_back(b);
+			}
+		}
+	}
+
 }
