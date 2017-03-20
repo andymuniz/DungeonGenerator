@@ -4,7 +4,7 @@ Room::Room(int x, int y, int z)
 {
 	this->vPosition[2] = z;
 	this->setPosition(x, y);
-	this->bTrueRoom = bFillerCell = false;
+	this->bTrueRoom = bFillerCell = bConnected = bCorridorCell = false;
 }
 
 //This constructor is only used when filling gaps in Dungeon Generation..keep in mind
@@ -18,6 +18,7 @@ Room::Room(std::pair<float, float> pos, int z)
 	this->setEdgeSizes(1, 1);
 
 	this->setAABB();
+	bTrueRoom = bConnected = bCorridorCell = false;
 	bFillerCell = true;
 	//std::cout << "Filler Position: (" << vPosition[0] << ", " << vPosition[1] << ")" << std::endl;
 	//std::cout << "LL: (" << sAABB.LL[0] << ", " << sAABB.LL[1] << ")" << std::endl;
@@ -77,7 +78,7 @@ const int Room::getRight() const
 	return vPosition[0] + nHalfWidth;
 }
 
-bool Room::overlaps(const Room& b, int padding) const
+bool Room::overlaps(Room& b, int padding)
 {
 	auto a = this;
 	return !(b.getLeft() - padding >= a->getRight() ||
@@ -89,6 +90,7 @@ bool Room::overlaps(const Room& b, int padding) const
 bool Room::markIfTrueRoom(int minWidth, int minHeight)
 {
 	if (nWidth >= minWidth && nHeight >= minHeight) {
+		this->bConnected = true;
 		return (this->bTrueRoom = true);
 		//return true;
 	}

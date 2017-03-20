@@ -28,8 +28,9 @@ public:
 	const int& getHeight() const { return nHeight; };
 	const int& getWidth() const { return nWidth; };
 	const AABB& getAABB() const { return sAABB; };
-	bool isTrueRoom() { return bTrueRoom; };
-	bool isFillerCell() { return bFillerCell; };
+	const bool isTrueRoom()const { return bTrueRoom; };
+	const bool isFillerCell()const { return bFillerCell; };
+	const bool isConnected()const { return bConnected; };
 
 	//Get Boundaries, single x or y value for calculations.
 	const int getTop() const;
@@ -38,7 +39,7 @@ public:
 	const int getRight() const;
 
 	void shift(int dx, int dy);	//move room by a delta x and delta y amount
-	bool overlaps(const Room& B, int padding = 0) const;	//True if this room (A) overlaps with Room B
+	bool overlaps(Room& B, int padding);	//True if this room (A) overlaps with Room B
 	bool markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
 
 private:
@@ -50,6 +51,8 @@ private:
 	float RoomSizeRatio;
 	bool bTrueRoom;
 	bool bFillerCell;
+	bool bCorridorCell;
+	bool bConnected;	//only rooms with true will be used in the end
 	AABB sAABB;
 };
 

@@ -36,7 +36,18 @@ void Dungeon::GenerateDungeon()
 	fillSmallCellGaps();
 	/////Graph
 	constructGraph(); //construct a relative neighborhood graph 
-	//DetermineCorridors();
+	//constructCorridors();
+	{
+		for (auto& roomA : vTrueRooms) {
+			std::vector<Room*>& Edges = graph[roomA];
+			std::pair<float, float>CenterA = std::make_pair(roomA->getPosition()[0], roomA->getPosition()[1]);
+			for (auto& roomB : Edges) {
+				std::pair<float, float>CenterB = std::make_pair(roomB->getPosition()[0], roomB->getPosition()[1]);
+				//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
+				//Check the tileRoomMap for existing corridor tiles?
+			}
+		}
+	}
 }
 
 //Generates (val of nCells) Cells as Room objects and gives them a location.
@@ -110,11 +121,11 @@ void Dungeon::seperateCellRectangles()
 			a = vRooms[i];
 			for (int j = i + 1; j < (int)vRooms.size(); j++) { // for each pair of rooms (notice i+1)
 				b = vRooms[j];
-				if ((*a).overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
+				if (a->overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
 					touching = true; // update the touching flag so the loop iterates again
 					// find the two smallest deltas required to stop the overlap
-					dx = std::min(abs((*a).getRight() - (*b).getLeft() + padding), abs((*a).getLeft() - (*b).getRight() - padding));
-					dy = std::min(abs((*a).getBottom() - (*b).getTop() + padding), abs((*a).getTop() - (*b).getBottom() - padding));
+					dx = std::min(abs(a->getRight() - b->getLeft() + padding), abs(a->getLeft() - b->getRight() - padding));
+					dy = std::min(abs(a->getBottom() - b->getTop() + padding), abs(a->getTop() - b->getBottom() - padding));
 					// only keep the smalled delta
 					if (abs(dx) < abs(dy)) dy = 0;
 					else dx = 0;
@@ -125,8 +136,8 @@ void Dungeon::seperateCellRectangles()
 					dya = -dy / 2;
 					dyb = dy + dya;
 					// shift both rectangles
-					(*a).shift(dxa, dya);
-					(*b).shift(dxb, dyb);
+					a->shift(dxa, dya);
+					a->shift(dxb, dyb);
 				}
 			}
 		}
@@ -142,7 +153,7 @@ void Dungeon::markTileMap(Room& a)
 {
 	for (int x = a.getLeft(); x < a.getRight(); x++) {
 		for (int y = a.getBottom(); y < a.getTop(); y++) {
-			tileMap[std::make_pair(x + 0.5f, y + 0.5f)] = true;	//add a small offset to get the center and not the corner of pixel
+			tileRoomMap[std::make_pair(x + 0.5f, y + 0.5f)] = &a;	//add a small offset to get the center and not the corner of pixel
 		}
 	}
 }
@@ -169,15 +180,15 @@ void Dungeon::markTrueRooms()
 void Dungeon::fillSmallCellGaps()
 {
 	std::pair<float, float> point;	//original point we will center on
-	for (auto& it : this->tileMap) {
+	for (auto& it : this->tileRoomMap) {
 		point = it.first;
 		std::pair<float, float> point2, point3;	//will hold a point to check if a cell exists two cells away
 		//Check for gap above
 		point2 = std::make_pair(point.first, point.second + 1);
 		point3 = std::make_pair(point2.first, point2.second + 1);
-		if (this->tileMap.find(point2) == this->tileMap.end()) {
+		if (this->tileRoomMap.find(point2) == this->tileRoomMap.end()) {
 			//point doesn't exist so check for a point 1 further to veryify a gap.
-			if (this->tileMap.find(point3) != this->tileMap.end()) {
+			if (this->tileRoomMap.find(point3) != this->tileRoomMap.end()) {
 				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
 				markTileMap(*vRooms.back());
 			}
@@ -188,9 +199,9 @@ void Dungeon::fillSmallCellGaps()
 		//Check for gap below
 		point2 = std::make_pair(point.first, point.second - 1);
 		point3 = std::make_pair(point2.first, point2.second - 1);
-		if (this->tileMap.find(point2) == this->tileMap.end()) {
+		if (this->tileRoomMap.find(point2) == this->tileRoomMap.end()) {
 			//point doesn't exist so check for a point 1 further to veryify a gap.
-			if (this->tileMap.find(point3) != this->tileMap.end()) {
+			if (this->tileRoomMap.find(point3) != this->tileRoomMap.end()) {
 				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
 				markTileMap(*vRooms.back());
 			}
@@ -201,9 +212,9 @@ void Dungeon::fillSmallCellGaps()
 		//Check for gap to left
 		point2 = std::make_pair(point.first - 1, point.second);
 		point3 = std::make_pair(point2.first - 1, point2.second);
-		if (this->tileMap.find(point2) == this->tileMap.end()) {
+		if (this->tileRoomMap.find(point2) == this->tileRoomMap.end()) {
 			//point doesn't exist so check for a point 1 further to veryify a gap.
-			if (this->tileMap.find(point3) != this->tileMap.end()) {
+			if (this->tileRoomMap.find(point3) != this->tileRoomMap.end()) {
 				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
 				markTileMap(*vRooms.back());
 			}
@@ -214,9 +225,9 @@ void Dungeon::fillSmallCellGaps()
 		//Check for gap to right
 		point2 = std::make_pair(point.first + 1, point.second);
 		point3 = std::make_pair(point2.first + 1, point2.second);
-		if (this->tileMap.find(point2) == this->tileMap.end()) {
+		if (this->tileRoomMap.find(point2) == this->tileRoomMap.end()) {
 			//point doesn't exist so check for a point 1 further to veryify a gap.
-			if (this->tileMap.find(point3) != this->tileMap.end()) {
+			if (this->tileRoomMap.find(point3) != this->tileRoomMap.end()) {
 				this->vRooms.push_back(new Room(point2));	//create a 1x1 cell\room at that gap
 				markTileMap(*vRooms.back());
 			}

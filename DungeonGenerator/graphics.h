@@ -84,27 +84,29 @@ static int draw(Dungeon* MyDungeon) {
 		for (auto& it : MyDungeon->getRooms()) {
 			glPushMatrix();
 			glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
-			glBegin(GL_QUADS); //Begin quad coordinates
-			AABB box = it->getAABB();
-			float z = -180.f;
 
-			////Room Rectangle - draw counter-clockwise starting from LL corner.
-			if (it->isTrueRoom()) {
-				glColor3f(1, 0, 0);
-			}
-			else if (it->isFillerCell()) {
-				glColor3f(0, 1, 0);
-			}
-			else {
-				glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
-			}
+			if (it->isConnected()) {	//Could also just remove all unConnected Rooms instead...
+				glBegin(GL_QUADS); //Begin quad coordinates
+				AABB box = it->getAABB();
+				float z = -180.f;
 
-			glVertex3d(box.LL[0], box.LL[1], z);
-			glVertex3d(box.LR[0], box.LR[1], z);
-			glVertex3d(box.UR[0], box.UR[1], z);
-			glVertex3d(box.UL[0], box.UL[1], z);
-			glEnd(); //End quad coordinates
+				////Room Rectangle - draw counter-clockwise starting from LL corner.
+				if (it->isTrueRoom()) {
+					glColor3f(1, 0, 0);
+				}
+				else if (it->isFillerCell()) {
+					glColor3f(0, 1, 0);
+				}
+				else {
+					glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+				}
 
+				glVertex3d(box.LL[0], box.LL[1], z);
+				glVertex3d(box.LR[0], box.LR[1], z);
+				glVertex3d(box.UR[0], box.UR[1], z);
+				glVertex3d(box.UL[0], box.UL[1], z);
+				glEnd(); //End quad coordinates
+			}
 			glPopMatrix();
 		}
 

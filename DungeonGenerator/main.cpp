@@ -1,4 +1,4 @@
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") //this prevents the console window from opening
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") //this prevents the console window from opening
 //Include GLEW
 #include <GL/glew.h>
 //Include GLFW

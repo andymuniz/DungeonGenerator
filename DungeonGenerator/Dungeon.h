@@ -23,7 +23,8 @@ public:
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
 	const std::map<Room*, std::vector<Room*>>& getGraph()const { return graph; };
-	const std::map < std::pair<float, float >, bool > & getTileMap()const { return tileMap; };
+	//const std::map < std::pair<float, float >, bool > & getTileMap()const { return tileMap; };
+	const std::map < std::pair<float, float >, Room* > & getTileMap()const { return tileRoomMap; };
 
 	void generateCellCoordinates();
 	void generateCellRectangles();
@@ -51,7 +52,9 @@ private:
 	int nDungeonSize;//Length/Width(in 'tiles') of the Dungeon. Area will be a square for simplicity.
 
 	/*tileMap used to indicate which 'tiles' of the Dungeon contain a tile. Use bool or int. Int may be useful to indicate the type of tile. 0 for empty. */
-	std::map < std::pair < float, float >, bool > tileMap;	//maps if a point contains part of a cell of some kind.
+	/*Maybe just remove tileMap...lol*/
+	//std::map < std::pair < float, float >, bool > tileMap;	//maps if a point contains part of a cell of some kind.
+	std::map < std::pair < float, float >, Room* > tileRoomMap;	//maps out every drawn "pixel" to it's respective Room
 	std::vector<Room*> vRooms;	//keeps track of the rooms.
 	std::vector<Room*> vTrueRooms;	//keeps track of true rooms.
 	std::map<Room*, std::vector<Room*>> graph;	//our graph used to form the dungeon paths
