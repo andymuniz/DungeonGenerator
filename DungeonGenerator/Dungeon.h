@@ -28,7 +28,9 @@ public:
 
 	void generateCellCoordinates();
 	void generateCellRectangles();
+	void seperateTrueRooms();
 	void seperateCellRectangles();
+	bool roomsTooClose(int padding);
 	void markTileMap(Room& a);
 	void markAllTileMap();
 	void markTrueRooms();

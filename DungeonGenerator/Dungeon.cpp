@@ -29,10 +29,15 @@ void Dungeon::GenerateDungeon()
 	//-----Determine Cell Properties
 	generateCellCoordinates();
 	generateCellRectangles();
-	////Steer the Cells away from each other to remove overlap.
-	seperateCellRectangles();
-	markAllTileMap();
 	markTrueRooms();
+	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
+	bool tooClose = false;
+	do {
+		seperateTrueRooms();
+		seperateCellRectangles();
+	} while (roomsTooClose(2));
+
+	markAllTileMap();
 	fillSmallCellGaps();
 	/////Graph
 	constructGraph(); //construct a relative neighborhood graph 
@@ -102,6 +107,50 @@ void Dungeon::generateCellRectangles()
 	}
 }
 
+void Dungeon::seperateTrueRooms()
+{
+	int iterations = 0; //for debugging, remove later
+	int padding = 5;
+	Room* a;
+	Room* b; // to hold any two rooms that are over lapping
+	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
+	bool touching = false; // a boolean flag to keep track of touching rooms
+	do {
+		if (debug_flag) {
+			std::cout << "Starting " << "# of iteration: " << iterations << std::endl;
+			iterations++;
+		}
+		touching = false;
+		for (int i = 0; i < (int)vTrueRooms.size(); i++) {
+			a = vTrueRooms[i];
+			for (int j = i + 1; j < (int)vTrueRooms.size(); j++) { // for each pair of rooms (notice i+1)
+				b = vTrueRooms[j];
+				if (a->overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
+					touching = true; // update the touching flag so the loop iterates again
+									 // find the two smallest deltas required to stop the overlap
+					dx = std::min(a->getRight(padding) - b->getLeft(padding), a->getLeft(padding) - b->getRight(padding));
+					dy = std::min(a->getBottom(padding) - b->getTop(padding), a->getTop(padding) - b->getBottom(padding));
+					// only keep the smalled delta
+					if (abs(dx) < abs(dy)) dy = 0;
+					else dx = 0;
+					// create a delta for each rectangle as half the whole delta.
+					dxa = ceil(-dx / 2.f);
+					dxb = ceil(dx + dxa);
+					// same for y
+					dya = ceil(-dy / 2.f);
+					dyb = ceil(dy + dya);
+					// shift both rectangles
+					a->shift(dxa, dya);
+					b->shift(dxb, dyb);
+				}
+			}
+		}
+	} while (touching == true); // loop until no rectangles are touching
+	if (debug_flag) {
+		std::cout << "Out of Loop." << std::endl << "# of iterations: " << iterations << std::endl;
+	}
+}
+
 //Steers Cells away from each other, to remove overlap !!TODO: Check the rounding for bugs!!!!! IMPORTANT
 void Dungeon::seperateCellRectangles()
 {
@@ -110,7 +159,7 @@ void Dungeon::seperateCellRectangles()
 	Room* a;
 	Room* b; // to hold any two rooms that are over lapping
 	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
-	bool touching; // a boolean flag to keep track of touching rooms
+	bool touching = false; // a boolean flag to keep track of touching rooms
 	do {
 		if (debug_flag) {
 			std::cout << "Starting " << "# of iteration: " << iterations << std::endl;
@@ -124,27 +173,44 @@ void Dungeon::seperateCellRectangles()
 				if (a->overlaps(*b, padding)) { // if the two rooms touch (allowed to overlap by 1)
 					touching = true; // update the touching flag so the loop iterates again
 					// find the two smallest deltas required to stop the overlap
-					dx = std::min(abs(a->getRight() - b->getLeft() + padding), abs(a->getLeft() - b->getRight() - padding));
-					dy = std::min(abs(a->getBottom() - b->getTop() + padding), abs(a->getTop() - b->getBottom() - padding));
+					dx = std::min(a->getRight(padding) - b->getLeft(padding), a->getLeft(padding) - b->getRight(padding));
+					dy = std::min(a->getBottom(padding) - b->getTop(padding), a->getTop(padding) - b->getBottom(padding));
 					// only keep the smalled delta
 					if (abs(dx) < abs(dy)) dy = 0;
 					else dx = 0;
 					// create a delta for each rectangle as half the whole delta.
-					dxa = -dx / 2;
-					dxb = dx + dxa;
+					dxa = ceil(-dx / 2.f);
+					dxb = ceil(dx + dxa);
 					// same for y
-					dya = -dy / 2;
-					dyb = dy + dya;
+					dya = ceil(-dy / 2.f);
+					dyb = ceil(dy + dya);
 					// shift both rectangles
 					a->shift(dxa, dya);
-					a->shift(dxb, dyb);
+					b->shift(dxb, dyb);
 				}
 			}
 		}
-	} while (touching); // loop until no rectangles are touching
+	} while (touching == true); // loop until no rectangles are touching
 	if (debug_flag) {
 		std::cout << "Out of Loop." << std::endl << "# of iterations: " << iterations << std::endl;
 	}
+}
+
+//Returns true if rooms edges are closer than padding * 2 distance apart
+bool Dungeon::roomsTooClose(int padding)
+{
+	Room* a;
+	Room* b; // to hold any two rooms that are over lapping
+	for (int i = 0; i < (int)vTrueRooms.size(); i++) {
+		a = vTrueRooms[i];
+		for (int j = i + 1; j < (int)vTrueRooms.size(); j++) { // for each pair of rooms (notice i+1)
+			b = vTrueRooms[j];
+			if (a->overlaps(*b, padding)) { // if the two rooms touch
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 //Marks every (integer)coodinate residing in a Room in the tileMap
@@ -282,6 +348,7 @@ void Dungeon::fillSmallCellGaps()
 	}
 }
 
+//constructs a relative neighborhood graph
 void Dungeon::constructGraph()
 {
 	Room *a, *b, *c;

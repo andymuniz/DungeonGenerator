@@ -13,7 +13,7 @@
 #include "graphics.h"
 
 //Globals
-bool debug_flag = false;
+bool debug_flag = true;
 int screenWidth = 640;
 int screenHeight = 468;
 

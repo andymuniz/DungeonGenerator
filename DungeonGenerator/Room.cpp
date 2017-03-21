@@ -58,33 +58,33 @@ void Room::setAABB()
 	this->sAABB.UL[1] = 0 + nHalfHeight;
 }
 
-const int  Room::getTop() const
+const int  Room::getTop(int padding) const
 {
-	return vPosition[1] + nHalfHeight;
+	return vPosition[1] + nHalfHeight + padding;
 }
 
-const int Room::getBottom() const
+const int Room::getBottom(int padding) const
 {
-	return vPosition[1] - nHalfHeight;
+	return vPosition[1] - nHalfHeight - padding;
 }
 
-const int Room::getLeft() const
+const int Room::getLeft(int padding) const
 {
-	return vPosition[0] - nHalfWidth;
+	return vPosition[0] - nHalfWidth - padding;
 }
 
-const int Room::getRight() const
+const int Room::getRight(int padding) const
 {
-	return vPosition[0] + nHalfWidth;
+	return vPosition[0] + nHalfWidth + padding;
 }
 
 bool Room::overlaps(Room& b, int padding)
 {
 	auto a = this;
-	return !(b.getLeft() - padding >= a->getRight() ||
-		b.getRight() <= a->getLeft() - padding ||
-		b.getTop() <= a->getBottom() - padding ||
-		b.getBottom() - padding >= a->getTop());
+	return !((b.getLeft(padding)) >= a->getRight(padding) ||
+		b.getRight(padding) <= (a->getLeft(padding)) ||
+		b.getTop(padding) <= (a->getBottom(padding)) ||
+		(b.getBottom(padding)) >= a->getTop(padding));
 }
 
 bool Room::markIfTrueRoom(int minWidth, int minHeight)

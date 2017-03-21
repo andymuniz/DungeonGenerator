@@ -85,7 +85,7 @@ static int draw(Dungeon* MyDungeon) {
 			glPushMatrix();
 			glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
 
-			if (it->isConnected()) {	//Could also just remove all unConnected Rooms instead...
+			if (true) {	//Could also just remove all unConnected Rooms instead...
 				glBegin(GL_QUADS); //Begin quad coordinates
 				AABB box = it->getAABB();
 				float z = -180.f;

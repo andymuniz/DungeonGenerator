@@ -33,13 +33,13 @@ public:
 	const bool isConnected()const { return bConnected; };
 
 	//Get Boundaries, single x or y value for calculations.
-	const int getTop() const;
-	const int getBottom() const;
-	const int getLeft() const;
-	const int getRight() const;
+	const int getTop(int padding = 0) const;
+	const int getBottom(int padding = 0) const;
+	const int getLeft(int padding = 0) const;
+	const int getRight(int padding = 0) const;
 
 	void shift(int dx, int dy);	//move room by a delta x and delta y amount
-	bool overlaps(Room& B, int padding);	//True if this room (A) overlaps with Room B
+	bool overlaps(Room& B, int padding = 0);	//True if this room (A) overlaps with Room B
 	bool markIfTrueRoom(int minWidth, int minHeight);	//marks this object as a True Room if it fits the size requirements
 
 private:
