@@ -35,68 +35,67 @@ void Dungeon::GenerateDungeon()
 			room->expand(1);
 	}
 	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
-	seperateCellRectangles();
 
-	//{
-	//	bool tooClose = false;
-	//	do {
-	//		seperateTrueRooms();
-	//		seperateCellRectangles();
-	//	} while (roomsTooClose(5));
-	//}
+	{
+		bool tooClose = false;
+		do {
+			seperateTrueRooms();
+			seperateCellRectangles();
+		} while (roomsTooClose(5));
+	}
 
 	markAllTileMap(vRooms);
-	//fillSmallCellGaps();
+	fillSmallCellGaps();
 
-	///////Graph
-	//constructGraph(); //construct a relative neighborhood graph 
-	////constructCorridors();
-	//{
-	//	srand((unsigned int)time(NULL));
-	//	float dx, dy, x, y;
-	//	Room *a, *b;
-	//	for (auto& outer : vTrueRooms) {
-	//		std::vector<Room*>& Edges = graph[outer];
+	/////Graph
+	constructGraph(); //construct a relative neighborhood graph 
+	//constructCorridors();
+	{
+		srand((unsigned int)time(NULL));
+		float dx, dy, x, y;
+		Room *a, *b;
+		for (auto& outer : vTrueRooms) {
+			std::vector<Room*>& Edges = graph[outer];
 
-	//		for (auto& inner : Edges) {
-	//			//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
-	//			//Check the tileRoomMap for existing corridor tiles?
-	//			if (outer->getPosition()[0] < inner->getPosition()[0]) {
-	//				a = outer;
-	//				b = inner;
-	//			}
-	//			else {
-	//				a = inner;
-	//				b = outer;
-	//			}
+			for (auto& inner : Edges) {
+				//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
+				//Check the tileRoomMap for existing corridor tiles?
+				if (outer->getPosition()[0] < inner->getPosition()[0]) {
+					a = outer;
+					b = inner;
+				}
+				else {
+					a = inner;
+					b = outer;
+				}
 
-	//			x = a->getPosition()[0];
-	//			y = a->getPosition()[1];
-	//			dx = b->getPosition()[0] - x;
-	//			dy = b->getPosition()[1] - y;
+				x = a->getPosition()[0];
+				y = a->getPosition()[1];
+				dx = b->getPosition()[0] - x;
+				dy = b->getPosition()[1] - y;
 
-	//			if (rand() % 2 == 1) {
-	//				vRooms.push_back(new Room(x, y, dx + 1, 1));
-	//				vCorridorRooms.push_back(vRooms.back());
-	//				vRooms.push_back(new Room(x + dx, y, 1, dy));
-	//				vCorridorRooms.push_back(vRooms.back());
-	//			}
-	//			else {
-	//				vRooms.push_back(new Room(x, y + dy, dx + 1, 1));
-	//				vCorridorRooms.push_back(vRooms.back());
-	//				vRooms.push_back(new Room(x, y, 1, dy));
-	//				vCorridorRooms.push_back(vRooms.back());
-	//			}
+				if (rand() % 2 == 1) {
+					vRooms.push_back(new Room(x, y, dx + 1, 1));
+					vCorridorRooms.push_back(vRooms.back());
+					vRooms.push_back(new Room(x + dx, y, 1, dy));
+					vCorridorRooms.push_back(vRooms.back());
+				}
+				else {
+					vRooms.push_back(new Room(x, y + dy, dx + 1, 1));
+					vCorridorRooms.push_back(vRooms.back());
+					vRooms.push_back(new Room(x, y, 1, dy));
+					vCorridorRooms.push_back(vRooms.back());
+				}
 
-	//		}
-	//	}
-	//}
-	////Expand corridor sizes
-	//{
-	//	for (auto room : vCorridorRooms)
-	//		room->expand(1);
-	//}
-	//markAllTileMap(vCorridorRooms);
+			}
+		}
+	}
+	//Expand corridor sizes
+	{
+		for (auto room : vCorridorRooms)
+			room->expand(1);
+	}
+	markAllTileMap(vCorridorRooms);
 }
 
 //Generates (val of nCells) Cells as Room objects and gives them a location.
