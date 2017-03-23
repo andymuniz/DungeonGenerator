@@ -52,7 +52,7 @@ void Dungeon::GenerateDungeon()
 	//constructCorridors();
 	{
 		srand((unsigned int)time(NULL));
-		float dx, dy, x, y;
+		int dx, dy, x, y;
 		Room *a, *b;
 		for (auto& outer : vTrueRooms) {
 			std::vector<Room*>& Edges = graph[outer];
@@ -93,7 +93,7 @@ void Dungeon::GenerateDungeon()
 	//Expand corridor sizes
 	{
 		for (auto room : vCorridorRooms)
-			room->expand(1);
+			 room->expand(1);
 	}
 	markAllTileMap(vCorridorRooms);
 }
