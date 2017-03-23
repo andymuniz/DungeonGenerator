@@ -1,4 +1,4 @@
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") //this prevents the console window from opening
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup") //this prevents the console window from opening
 //Include GLEW
 #include <GL/glew.h>
 //Include GLFW
@@ -13,7 +13,7 @@
 #include "graphics.h"
 
 //Globals
-bool debug_flag = false;
+bool debug_flag = true;
 int screenWidth = 640;
 int screenHeight = 468;
 
