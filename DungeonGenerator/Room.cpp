@@ -27,36 +27,6 @@ Room::Room(std::pair<float, float> pos, int z)
 	//std::cout << "UL: (" << sAABB.UL[0] << ", " << sAABB.UL[1] << ")" << std::endl << std::endl;
 }
 
-//Constructor used in creating corridors
-Room::Room(int x1, int y1, int width, int height) {
-
-	float _left = x1;
-	float _right = x1;
-	if (width < 0)
-		_left += width;
-	else
-		_right += width;
-
-	float _bottom = y1;
-	float _top = y1;
-	if (height < 0)
-		_bottom += height;
-	else
-		_top += height;
-
-	this->vPosition[2] = -5;
-
-	vPosition[0] = (_left + _right) / 2;
-	vPosition[1] = (_top + _bottom) / 2;
-	this->bTrueRoom = false;
-	this->setEdgeSizes(_top - _bottom, _right - _left);
-
-	this->setAABB();
-	bTrueRoom = false;
-	bCorridorCell = bConnected = true;
-	bFillerCell = true;
-}
-
 Room::~Room()
 {
 }
@@ -88,22 +58,22 @@ void Room::setAABB()
 	this->sAABB.UL[1] = 0 + nHalfHeight;
 }
 
-const float  Room::getTop(int padding) const
+const int  Room::getTop(int padding) const
 {
 	return vPosition[1] + nHalfHeight + padding;
 }
 
-const float Room::getBottom(int padding) const
+const int Room::getBottom(int padding) const
 {
 	return vPosition[1] - nHalfHeight - padding;
 }
 
-const float Room::getLeft(int padding) const
+const int Room::getLeft(int padding) const
 {
 	return vPosition[0] - nHalfWidth - padding;
 }
 
-const float Room::getRight(int padding) const
+const int Room::getRight(int padding) const
 {
 	return vPosition[0] + nHalfWidth + padding;
 }

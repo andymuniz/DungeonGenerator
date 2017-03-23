@@ -35,51 +35,21 @@ void Dungeon::GenerateDungeon()
 	do {
 		seperateTrueRooms();
 		seperateCellRectangles();
-	} while (roomsTooClose(5));
+	} while (roomsTooClose(2));
 
 	markAllTileMap();
 	fillSmallCellGaps();
-
 	/////Graph
 	constructGraph(); //construct a relative neighborhood graph 
 	//constructCorridors();
 	{
-		srand(time(NULL));
-		int dx, dy, x, y;
-		Room *a, *b;
-		for (auto& outer : vTrueRooms) {
-			std::vector<Room*>& Edges = graph[outer];
-
-			for (auto& inner : Edges) {
+		for (auto& roomA : vTrueRooms) {
+			std::vector<Room*>& Edges = graph[roomA];
+			std::pair<float, float>CenterA = std::make_pair(roomA->getPosition()[0], roomA->getPosition()[1]);
+			for (auto& roomB : Edges) {
+				std::pair<float, float>CenterB = std::make_pair(roomB->getPosition()[0], roomB->getPosition()[1]);
 				//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
 				//Check the tileRoomMap for existing corridor tiles?
-				if (outer->getPosition()[0] < inner->getPosition()[0]) {
-					a = outer;
-					b = inner;
-				}
-				else {
-					a = inner;
-					b = outer;
-				}
-
-				x = (int)a->getPosition()[0];
-				y = (int)a->getPosition()[1];
-				dx = (int)b->getPosition()[0] - x;
-				dy = (int)b->getPosition()[1] - y;
-
-				if (rand() % 2 == 1) {
-					vRooms.push_back(new Room(x, y, dx + 1, 1));
-					vCorridorRooms.push_back(vRooms.back());
-					vRooms.push_back(new Room(x + dx, y, 1, dy));
-					vCorridorRooms.push_back(vRooms.back());
-				}
-				else {
-					vRooms.push_back(new Room(x, y + dy, dx + 1, 1));
-					vCorridorRooms.push_back(vRooms.back());
-					vRooms.push_back(new Room(x, y, 1, dy));
-					vCorridorRooms.push_back(vRooms.back());
-				}
-
 			}
 		}
 	}
@@ -140,7 +110,7 @@ void Dungeon::generateCellRectangles()
 void Dungeon::seperateTrueRooms()
 {
 	int iterations = 0; //for debugging, remove later
-	int padding = 6;
+	int padding = 5;
 	Room* a;
 	Room* b; // to hold any two rooms that are over lapping
 	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
@@ -247,8 +217,8 @@ bool Dungeon::roomsTooClose(int padding)
 //Stores the coordinate of the "center" of each 1x1 "pixel" in every room.
 void Dungeon::markTileMap(Room& a)
 {
-	for (int x = (int)a.getLeft(); x < (int)a.getRight(); x++) {
-		for (int y = (int)a.getBottom(); y < (int)a.getTop(); y++) {
+	for (int x = a.getLeft(); x < a.getRight(); x++) {
+		for (int y = a.getBottom(); y < a.getTop(); y++) {
 			tileRoomMap[std::make_pair(x + 0.5f, y + 0.5f)] = &a;	//add a small offset to get the center and not the corner of pixel
 		}
 	}
