@@ -79,52 +79,60 @@ static int draw(Dungeon* MyDungeon) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 		glLoadIdentity(); //Reset the drawing perspective
+		float z = -200.f;
 
-		//Draw every room
-		for (auto& it : MyDungeon->getRooms()) {
-			glPushMatrix();
-			glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
-
-			if (true) {	//Could also just remove all unConnected Rooms instead...
-				glBegin(GL_QUADS); //Begin quad coordinates
-				AABB box = it->getAABB();
-				float z = -180.f;
-
-				////Room Rectangle - draw counter-clockwise starting from LL corner.
-				if (it->isTrueRoom()) {
-					glColor3f(1, 0, 0);
-				}
-				else if (it->isFillerCell()) {
-					glColor3f(0, 1, 0);
-				}
-				else {
-					glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
-				}
-
-				glVertex3d(box.LL[0], box.LL[1], z);
-				glVertex3d(box.LR[0], box.LR[1], z);
-				glVertex3d(box.UR[0], box.UR[1], z);
-				glVertex3d(box.UL[0], box.UL[1], z);
-				glEnd(); //End quad coordinates
-			}
-			glPopMatrix();
-		}
-
-		/*Testing the TileMap...Works! Leaving here for reference.*/
-		//for (auto& it : MyDungeon->getTileMap()) {
+		////Draw every room
+		//for (auto& it : MyDungeon->getRooms()) {
 		//	glPushMatrix();
-		//	glTranslatef(it.first.first - 50.f, it.first.second - 50.f, 0.f);
-		//	glBegin(GL_QUADS); //Begin quad coordinates
-		//	float z = -180.f;
-		//	////Room Rectangle - draw counter-clockwise starting from LL corner.
-		//	glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
-		//	glVertex3d(-1.f, -1.f, z);
-		//	glVertex3d(1.f, -1.f, z);
-		//	glVertex3d(1.f, 1.f, z);
-		//	glVertex3d(-1.f, 1.f, z);
-		//	glEnd(); //End quad coordinates
+		//	glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
+
+		//	if (true) {	//Could also just remove all unConnected Rooms instead...
+		//		glBegin(GL_QUADS); //Begin quad coordinates
+		//		AABB box = it->getAABB();
+
+		//		////Room Rectangle - draw counter-clockwise starting from LL corner.
+		//		if (it->isTrueRoom()) {
+		//			glColor3f(1, 0, 0);
+		//		}
+		//		else if (it->isFillerCell()) {
+		//			glColor3f(0, 1, 0);
+		//		}
+		//		else {
+		//			glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+		//		}
+
+		//		glVertex3d(box.LL[0], box.LL[1], z);
+		//		glVertex3d(box.LR[0], box.LR[1], z);
+		//		glVertex3d(box.UR[0], box.UR[1], z);
+		//		glVertex3d(box.UL[0], box.UL[1], z);
+		//		glEnd(); //End quad coordinates
+		//	}
 		//	glPopMatrix();
 		//}
+
+		/*Testing the TileMap...Works! Leaving here for reference.*/
+		for (auto& it : MyDungeon->getTileMap()) {
+			glPushMatrix();
+			glTranslatef(it.first.first - 50.f, it.first.second - 50.f, 0.f);
+			glBegin(GL_QUADS); //Begin quad coordinates
+			////Room Rectangle - draw counter-clockwise starting from LL corner.
+			//glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+			if (it.second->isTrueRoom()) {
+				glColor3f(1, 0, 0);
+			}
+			else if (it.second->isFillerCell()) {
+				glColor3f(0, 1, 0);
+			}
+			else {
+				glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+			}
+			glVertex3d(-1.f, -1.f, z);
+			glVertex3d(1.f, -1.f, z);
+			glVertex3d(1.f, 1.f, z);
+			glVertex3d(-1.f, 1.f, z);
+			glEnd(); //End quad coordinates
+			glPopMatrix();
+		}
 
 		///*Draw Graph Edges */
 		//{
@@ -133,7 +141,6 @@ static int draw(Dungeon* MyDungeon) {
 		//	glPushMatrix();
 		//	glTranslatef(-50.f, -50.f, 0.f);
 		//	glBegin(GL_LINES);
-		//	float z = -180.f;
 		//	for (auto& key : MyDungeon->getGraph()) {
 		//		for (auto& room : key.second) {
 		//			glVertex3f(key.first->getPosition()[0], key.first->getPosition()[1], z);

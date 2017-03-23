@@ -30,59 +30,73 @@ void Dungeon::GenerateDungeon()
 	generateCellCoordinates();
 	generateCellRectangles();
 	markTrueRooms();
-	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
-	bool tooClose = false;
-	do {
-		seperateTrueRooms();
-		seperateCellRectangles();
-	} while (roomsTooClose(5));
-
-	markAllTileMap();
-	fillSmallCellGaps();
-
-	/////Graph
-	constructGraph(); //construct a relative neighborhood graph 
-	//constructCorridors();
 	{
-		srand(time(NULL));
-		int dx, dy, x, y;
-		Room *a, *b;
-		for (auto& outer : vTrueRooms) {
-			std::vector<Room*>& Edges = graph[outer];
-
-			for (auto& inner : Edges) {
-				//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
-				//Check the tileRoomMap for existing corridor tiles?
-				if (outer->getPosition()[0] < inner->getPosition()[0]) {
-					a = outer;
-					b = inner;
-				}
-				else {
-					a = inner;
-					b = outer;
-				}
-
-				x = (int)a->getPosition()[0];
-				y = (int)a->getPosition()[1];
-				dx = (int)b->getPosition()[0] - x;
-				dy = (int)b->getPosition()[1] - y;
-
-				if (rand() % 2 == 1) {
-					vRooms.push_back(new Room(x, y, dx + 1, 1));
-					vCorridorRooms.push_back(vRooms.back());
-					vRooms.push_back(new Room(x + dx, y, 1, dy));
-					vCorridorRooms.push_back(vRooms.back());
-				}
-				else {
-					vRooms.push_back(new Room(x, y + dy, dx + 1, 1));
-					vCorridorRooms.push_back(vRooms.back());
-					vRooms.push_back(new Room(x, y, 1, dy));
-					vCorridorRooms.push_back(vRooms.back());
-				}
-
-			}
-		}
+		for (auto room : vTrueRooms)
+			room->expand(1);
 	}
+	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
+	seperateCellRectangles();
+
+	//{
+	//	bool tooClose = false;
+	//	do {
+	//		seperateTrueRooms();
+	//		seperateCellRectangles();
+	//	} while (roomsTooClose(5));
+	//}
+
+	markAllTileMap(vRooms);
+	//fillSmallCellGaps();
+
+	///////Graph
+	//constructGraph(); //construct a relative neighborhood graph 
+	////constructCorridors();
+	//{
+	//	srand((unsigned int)time(NULL));
+	//	float dx, dy, x, y;
+	//	Room *a, *b;
+	//	for (auto& outer : vTrueRooms) {
+	//		std::vector<Room*>& Edges = graph[outer];
+
+	//		for (auto& inner : Edges) {
+	//			//We want L shaped corridors if the rooms aren't aligned on an axis at all. Straightish Lines otherwise.
+	//			//Check the tileRoomMap for existing corridor tiles?
+	//			if (outer->getPosition()[0] < inner->getPosition()[0]) {
+	//				a = outer;
+	//				b = inner;
+	//			}
+	//			else {
+	//				a = inner;
+	//				b = outer;
+	//			}
+
+	//			x = a->getPosition()[0];
+	//			y = a->getPosition()[1];
+	//			dx = b->getPosition()[0] - x;
+	//			dy = b->getPosition()[1] - y;
+
+	//			if (rand() % 2 == 1) {
+	//				vRooms.push_back(new Room(x, y, dx + 1, 1));
+	//				vCorridorRooms.push_back(vRooms.back());
+	//				vRooms.push_back(new Room(x + dx, y, 1, dy));
+	//				vCorridorRooms.push_back(vRooms.back());
+	//			}
+	//			else {
+	//				vRooms.push_back(new Room(x, y + dy, dx + 1, 1));
+	//				vCorridorRooms.push_back(vRooms.back());
+	//				vRooms.push_back(new Room(x, y, 1, dy));
+	//				vCorridorRooms.push_back(vRooms.back());
+	//			}
+
+	//		}
+	//	}
+	//}
+	////Expand corridor sizes
+	//{
+	//	for (auto room : vCorridorRooms)
+	//		room->expand(1);
+	//}
+	//markAllTileMap(vCorridorRooms);
 }
 
 //Generates (val of nCells) Cells as Room objects and gives them a location.
@@ -91,7 +105,7 @@ void Dungeon::generateCellCoordinates()
 	srand((unsigned int)time(NULL));
 	//Create and push a room into our vector holding our Rooms.
 	for (int i = 0; i < nCells; i++) {
-		this->vRooms.push_back(new Room(rand() % 100, rand() % 100));
+		this->vRooms.push_back(new Room((float)(rand() % 100), (float)(rand() % 100)));
 	}
 }
 
@@ -109,7 +123,7 @@ void Dungeon::generateCellRectangles()
 		if (width % 2 != 0)
 			width++;
 
-		it->setEdgeSizes(height, width);
+		it->setEdgeSizes((float)height, (float)width);
 		// Debugging
 		if (debug_flag) {
 			std::cout << "X: " << it->getPosition()[0] << "      Y: " << it->getPosition()[1] //<< std::endl;
@@ -140,10 +154,10 @@ void Dungeon::generateCellRectangles()
 void Dungeon::seperateTrueRooms()
 {
 	int iterations = 0; //for debugging, remove later
-	int padding = 6;
+	float padding = 6;
 	Room* a;
 	Room* b; // to hold any two rooms that are over lapping
-	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
+	float dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
 	bool touching = false; // a boolean flag to keep track of touching rooms
 	do {
 		if (debug_flag) {
@@ -185,10 +199,10 @@ void Dungeon::seperateTrueRooms()
 void Dungeon::seperateCellRectangles()
 {
 	int iterations = 0; //for debugging, remove later
-	int padding = 0;
+	float padding = 0;
 	Room* a;
 	Room* b; // to hold any two rooms that are over lapping
-	int dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
+	float dx, dxa, dxb, dy, dya, dyb; // holds delta values of the overlap
 	bool touching = false; // a boolean flag to keep track of touching rooms
 	do {
 		if (debug_flag) {
@@ -227,7 +241,7 @@ void Dungeon::seperateCellRectangles()
 }
 
 //Returns true if rooms edges are closer than padding * 2 distance apart
-bool Dungeon::roomsTooClose(int padding)
+bool Dungeon::roomsTooClose(float padding)
 {
 	Room* a;
 	Room* b; // to hold any two rooms that are over lapping
@@ -247,17 +261,17 @@ bool Dungeon::roomsTooClose(int padding)
 //Stores the coordinate of the "center" of each 1x1 "pixel" in every room.
 void Dungeon::markTileMap(Room& a)
 {
-	for (int x = (int)a.getLeft(); x < (int)a.getRight(); x++) {
-		for (int y = (int)a.getBottom(); y < (int)a.getTop(); y++) {
+	for (float x = a.getLeft(); x < a.getRight(); x++) {
+		for (float y = a.getBottom(); y < a.getTop(); y++) {
 			tileRoomMap[std::make_pair(x + 0.5f, y + 0.5f)] = &a;	//add a small offset to get the center and not the corner of pixel
 		}
 	}
 }
 
 //Marks all the occupied tiles in the tileMap
-void Dungeon::markAllTileMap()
+void Dungeon::markAllTileMap(std::vector<Room*>& vectorOfRooms)
 {
-	for (auto& it : vRooms) {
+	for (auto& it : vectorOfRooms) {
 		markTileMap(*it);
 	}
 }
@@ -266,7 +280,7 @@ void Dungeon::markAllTileMap()
 void Dungeon::markTrueRooms()
 {
 	for (auto& it : vRooms) {
-		if (it->markIfTrueRoom(nMinRoomEdgeWidth, nMinRoomEdgeHeight)) {
+		if (it->markIfTrueRoom((float)nMinRoomEdgeWidth, (float)nMinRoomEdgeHeight)) {
 			vTrueRooms.push_back(it);
 		}
 	}
@@ -384,14 +398,14 @@ void Dungeon::constructGraph()
 	Room *a, *b, *c;
 	double abDist, acDist, bcDist;
 	bool skip;
-	for (int i = 0; i < vTrueRooms.size(); i++) {
+	for (int i = 0; i < (int)vTrueRooms.size(); i++) {
 		a = vTrueRooms[i];
-		for (int j = i + 1; j < vTrueRooms.size(); j++) { // for each pair of rooms
+		for (int j = i + 1; j < (int)vTrueRooms.size(); j++) { // for each pair of rooms
 			skip = false;
 			b = vTrueRooms[j];
 			// get the sqrd distance between a and b
 			abDist = pow(a->getPosition()[0] - b->getPosition()[0], 2) + pow(a->getPosition()[1] - b->getPosition()[1], 2);
-			for (int k = 0; k < vTrueRooms.size(); k++) { // loop through all other rooms
+			for (int k = 0; k < (int)vTrueRooms.size(); k++) { // loop through all other rooms
 				if (k == i || k == j) // that are not a or b
 					continue;
 				c = vTrueRooms[k];
