@@ -30,9 +30,9 @@ public:
 	void generateCellRectangles();
 	void seperateTrueRooms();
 	void seperateCellRectangles();
-	bool roomsTooClose(int padding);
+	bool roomsTooClose(float padding);
 	void markTileMap(Room& a);
-	void markAllTileMap();
+	void markAllTileMap(std::vector<Room*>&);
 	void markTrueRooms();
 	void fillSmallCellGaps();
 	void constructGraph();	//construct relative neighbor graph between true rooms
