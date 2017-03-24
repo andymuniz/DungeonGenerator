@@ -59,6 +59,7 @@ private:
 	std::map < std::pair < float, float >, Room* > tileRoomMap;	//maps out every drawn "pixel" to it's respective Room
 	std::vector<Room*> vRooms;	//keeps track of the rooms.
 	std::vector<Room*> vTrueRooms;	//keeps track of true rooms.
+	std::vector<Room*> vCorridorRooms;	//keeps track of rooms made to create corridors.
 	std::map<Room*, std::vector<Room*>> graph;	//our graph used to form the dungeon paths
 };
 

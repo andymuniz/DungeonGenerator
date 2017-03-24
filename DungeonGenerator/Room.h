@@ -17,6 +17,7 @@ class Room
 public:
 	Room(int x, int y, int z = -5);
 	Room(std::pair<float, float> pos, int z = -5);
+	Room(int x1, int y1, int width, int height);
 	~Room();
 
 	//Getters&Setters
@@ -33,10 +34,10 @@ public:
 	const bool isConnected()const { return bConnected; };
 
 	//Get Boundaries, single x or y value for calculations.
-	const int getTop(int padding = 0) const;
-	const int getBottom(int padding = 0) const;
-	const int getLeft(int padding = 0) const;
-	const int getRight(int padding = 0) const;
+	const float getTop(int padding = 0) const;
+	const float getBottom(int padding = 0) const;
+	const float getLeft(int padding = 0) const;
+	const float getRight(int padding = 0) const;
 
 	void shift(int dx, int dy);	//move room by a delta x and delta y amount
 	bool overlaps(Room& B, int padding = 0);	//True if this room (A) overlaps with Room B

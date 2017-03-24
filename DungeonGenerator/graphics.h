@@ -126,23 +126,23 @@ static int draw(Dungeon* MyDungeon) {
 		//	glPopMatrix();
 		//}
 
-		/*Draw Graph Edges */
-		{
-			glLineWidth(3.5);
-			glColor3f(1, 1, 1);
-			glPushMatrix();
-			glTranslatef(-50.f, -50.f, 0.f);
-			glBegin(GL_LINES);
-			float z = -180.f;
-			for (auto& key : MyDungeon->getGraph()) {
-				for (auto& room : key.second) {
-					glVertex3f(key.first->getPosition()[0], key.first->getPosition()[1], z);
-					glVertex3f(room->getPosition()[0], room->getPosition()[1], z);
-				}
-			}
-			glEnd();
-			glPopMatrix();
-		}
+		///*Draw Graph Edges */
+		//{
+		//	glLineWidth(3.5);
+		//	glColor3f(1, 1, 1);
+		//	glPushMatrix();
+		//	glTranslatef(-50.f, -50.f, 0.f);
+		//	glBegin(GL_LINES);
+		//	float z = -180.f;
+		//	for (auto& key : MyDungeon->getGraph()) {
+		//		for (auto& room : key.second) {
+		//			glVertex3f(key.first->getPosition()[0], key.first->getPosition()[1], z);
+		//			glVertex3f(room->getPosition()[0], room->getPosition()[1], z);
+		//		}
+		//	}
+		//	glEnd();
+		//	glPopMatrix();
+		//}
 
 		//Swap buffers
 		glfwSwapBuffers(window);
