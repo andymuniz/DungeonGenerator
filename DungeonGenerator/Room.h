@@ -26,6 +26,7 @@ public:
 	void setEdgeSizes(float height, float width) { nHeight = height; nWidth = width; setHalfEdgeSizes(); };
 	void setHalfEdgeSizes() { nHalfWidth = nWidth / 2.f; nHalfHeight = nHeight / 2.f; };
 	void setAABB();		//calculates and sets the AABB based on position and edge sizes
+	void setConnected(bool Bool);
 	const float* getPosition() const { return vPosition; };
 	const float& getHeight() const { return nHeight; };
 	const float& getWidth() const { return nWidth; };

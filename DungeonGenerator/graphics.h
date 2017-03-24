@@ -86,7 +86,7 @@ static int draw(Dungeon* MyDungeon) {
 		//	glPushMatrix();
 		//	glTranslatef((float)it->getPosition()[0] - 50.f, (float)it->getPosition()[1] - 50.f, 0.f);
 
-		//	if (true) {	//Could also just remove all unConnected Rooms instead...
+		//	if (it->isConnected()) {	//Could also just remove all unConnected Rooms instead...
 		//		glBegin(GL_QUADS); //Begin quad coordinates
 		//		AABB box = it->getAABB();
 
@@ -114,33 +114,50 @@ static int draw(Dungeon* MyDungeon) {
 		for (auto& it : MyDungeon->getTileMap()) {
 			glPushMatrix();
 			glTranslatef(it.first.first - 50.f, it.first.second - 50.f, 0.f);
+
 			glBegin(GL_QUADS); //Begin quad coordinates
-			////Room Rectangle - draw counter-clockwise starting from LL corner.
-			//glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+			//Room Rectangle - draw counter-clockwise starting from LL corner.
 			if (it.second->isTrueRoom()) {
 				glColor3f(1, 0, 0);
 			}
-			else if (it.second->isFillerCell()) {
+			else if (it.second->isCorridorCell()) {	//corridor cells are green
 				glColor3f(0, 1, 0);
 			}
-			else {
-				glColor3f(47.f / 255.f, 79.f / 255.f, 79.f / 255.f);
+			else if (it.second->isFillerCell()) {	//filler cells are white -ish
+				glColor3f(.9, .9, .9);
+			}
+			else {	//leftover rooms that become part of corridors
+				glColor3f(47.f / 255.f, 139.f / 255.f, 99.f / 255.f);
+				//glColor3f(0, 1, 0);
 			}
 			glVertex3d(-.5f, -.5f, z);
 			glVertex3d(.5f, -.5f, z);
 			glVertex3d(.5f, .5f, z);
 			glVertex3d(-.5f, .5f, z);
 			glEnd(); //End quad coordinates
+
+			//Draw a grid outline on small "pixels"
+
+			glBegin(GL_LINE_LOOP); //Begin quad coordinates
+							   //Room Rectangle - draw counter-clockwise starting from LL corner.
+			glLineWidth(.001f);
+			glColor3f(0, 0, 0);
+			glVertex3d(-.5f, -.5f, z);
+			glVertex3d(.5f, -.5f, z);
+			glVertex3d(.5f, .5f, z);
+			glVertex3d(-.5f, .5f, z);
+			glEnd(); //End quad coordinates
+
 			glPopMatrix();
 		}
 
-		///*Draw Graph Edges */
+		/*Draw Graph Edges */
 		{
-			glLineWidth(3.5);
-			glColor3f(1, 1, 1);
 			glPushMatrix();
 			glTranslatef(-50.f, -50.f, 0.f);
 			glBegin(GL_LINES);
+			glLineWidth(2);
+			glColor3f(1, 1, 1);
 			for (auto& key : MyDungeon->getGraph()) {
 				for (auto& room : key.second) {
 					glVertex3f(key.first->getPosition()[0], key.first->getPosition()[1], z);

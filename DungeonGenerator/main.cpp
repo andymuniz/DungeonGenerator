@@ -14,8 +14,8 @@
 
 //Globals
 bool debug_flag = false;
-int screenWidth = 640;
-int screenHeight = 468;
+int screenWidth = 900;
+int screenHeight = 700;
 
 int main(void)
 {

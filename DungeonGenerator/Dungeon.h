@@ -36,6 +36,7 @@ public:
 	void markTrueRooms();
 	void fillSmallCellGaps();
 	void constructGraph();	//construct relative neighbor graph between true rooms
+	void removeUntouchedCells();
 
 private:
 	/*Initial properties and constraints of our desired dungeon required for its generation*/

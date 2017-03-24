@@ -30,12 +30,11 @@ void Dungeon::GenerateDungeon()
 	generateCellCoordinates();
 	generateCellRectangles();
 	markTrueRooms();
-	{
-		for (auto room : vTrueRooms)
-			room->expand(1);
-	}
-	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
+	//expand true room sizes by 1
+	for (auto room : vTrueRooms)
+		room->expand(1);
 
+	////Steer the Cells away from each other to remove overlap. Steer True Rooms away first, so we can space them away from each other a bit.
 	{
 		bool tooClose = false;
 		do {
@@ -49,6 +48,7 @@ void Dungeon::GenerateDungeon()
 
 	/////Graph
 	constructGraph(); //construct a relative neighborhood graph 
+
 	//constructCorridors();
 	{
 		srand((unsigned int)time(NULL));
@@ -90,12 +90,27 @@ void Dungeon::GenerateDungeon()
 			}
 		}
 	}
+
 	//Expand corridor sizes
-	{
-		for (auto room : vCorridorRooms)
-			 room->expand(1);
+	for (auto room : vCorridorRooms)
+		room->expand(1);
+
+	removeUntouchedCells();
+
+	//Remove disconnected cells from vRooms;
+	for (std::vector<Room*>::iterator it = vRooms.begin(); it != vRooms.end();) {
+		if (!(*it)->isConnected()) {
+			it = vRooms.erase(it);
+		}
+		else
+			++it;
 	}
+
+	//clear tileMap and remap it all?
 	markAllTileMap(vCorridorRooms);
+	tileRoomMap.clear();
+	markAllTileMap(vRooms);
+
 }
 
 //Generates (val of nCells) Cells as Room objects and gives them a location.
@@ -262,7 +277,20 @@ void Dungeon::markTileMap(Room& a)
 {
 	for (float x = a.getLeft(); x < a.getRight(); x++) {
 		for (float y = a.getBottom(); y < a.getTop(); y++) {
-			tileRoomMap[std::make_pair(x + 0.5f, y + 0.5f)] = &a;	//add a small offset to get the center and not the corner of pixel
+			std::pair<float, float> Pos = std::make_pair(x + 0.5f, y + 0.5f);
+			if (tileRoomMap.find(Pos) == tileRoomMap.end()) {//doesn't exist
+				tileRoomMap[Pos] = &a;	//add a small offset to get the center and not the corner of pixel
+			}
+			else {
+				if (tileRoomMap[Pos]->isTrueRoom()) {
+					continue;
+				}
+				if (tileRoomMap[Pos]->isCorridorCell()) {
+					continue;
+				}
+				tileRoomMap[Pos] = &a;	//add a small offset to get the center and not the corner of pixel
+			}
+
 		}
 	}
 }
@@ -426,4 +454,17 @@ void Dungeon::constructGraph()
 		}
 	}
 
+}
+
+void Dungeon::removeUntouchedCells()
+{
+	for (auto& corridor : vCorridorRooms) {
+		for (auto& room : vRooms) {
+			if (room->isConnected()) continue;
+
+			if (corridor->overlaps(*room, .5f)) {
+				room->setConnected(true);
+			}
+		}
+	}
 }

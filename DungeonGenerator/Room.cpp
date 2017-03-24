@@ -54,7 +54,7 @@ Room::Room(float x1, float y1, float width, float height) {
 	this->setAABB();
 	bTrueRoom = false;
 	bCorridorCell = bConnected = true;
-	bFillerCell = true;
+	bFillerCell = false;
 }
 
 Room::~Room()
@@ -92,6 +92,11 @@ void Room::setAABB()
 	this->sAABB.UR[1] = 0 + nHalfHeight;
 	this->sAABB.UL[0] = 0 - nHalfWidth;
 	this->sAABB.UL[1] = 0 + nHalfHeight;
+}
+
+void Room::setConnected(bool Bool)
+{
+	this->bConnected = Bool;
 }
 
 const float  Room::getTop(float padding) const
