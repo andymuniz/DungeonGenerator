@@ -1,6 +1,6 @@
 #include "Room.h"
 
-Room::Room(int x, int y, int z)
+Room::Room(float x, float y, float z)
 {
 	this->vPosition[2] = z;
 	this->setPosition(x, y);
@@ -8,7 +8,7 @@ Room::Room(int x, int y, int z)
 }
 
 //This constructor is only used when filling gaps in Dungeon Generation..keep in mind
-Room::Room(std::pair<float, float> pos, int z)
+Room::Room(std::pair<float, float> pos, float z)
 {
 	this->vPosition[2] = -5;
 	//this->setPosition(pos.first, pos.second);
@@ -28,7 +28,7 @@ Room::Room(std::pair<float, float> pos, int z)
 }
 
 //Constructor used in creating corridors
-Room::Room(int x1, int y1, int width, int height) {
+Room::Room(float x1, float y1, float width, float height) {
 
 	float _left = x1;
 	float _right = x1;
@@ -54,16 +54,22 @@ Room::Room(int x1, int y1, int width, int height) {
 	this->setAABB();
 	bTrueRoom = false;
 	bCorridorCell = bConnected = true;
-	bFillerCell = true;
+	bFillerCell = false;
 }
 
 Room::~Room()
 {
 }
 
-void Room::shift(int dx, int dy)
+void Room::shift(float dx, float dy)
 {
 	this->vPosition[0] += dx; this->vPosition[1] += dy;
+	this->setAABB();
+}
+
+void Room::expand(float by)
+{
+	this->setEdgeSizes(nHeight + (by * 2), nWidth + (by * 2));
 	this->setAABB();
 }
 
@@ -76,8 +82,8 @@ but this is an easy way to save hassle.
 //The true origin should be the Position
 void Room::setAABB()
 {
-	//nHalfWidth = nWidth / 2.f;
-	//nHalfHeight = nHeight / 2.f;
+	nHalfWidth = nWidth / 2.f;
+	nHalfHeight = nHeight / 2.f;
 	this->sAABB.LL[0] = 0 - nHalfWidth;
 	this->sAABB.LL[1] = 0 - nHalfHeight;
 	this->sAABB.LR[0] = 0 + nHalfWidth;
@@ -88,36 +94,49 @@ void Room::setAABB()
 	this->sAABB.UL[1] = 0 + nHalfHeight;
 }
 
-const float  Room::getTop(int padding) const
+void Room::setConnected(bool Bool)
+{
+	this->bConnected = Bool;
+}
+
+const float  Room::getTop(float padding) const
 {
 	return vPosition[1] + nHalfHeight + padding;
 }
 
-const float Room::getBottom(int padding) const
+const float Room::getBottom(float padding) const
 {
 	return vPosition[1] - nHalfHeight - padding;
 }
 
-const float Room::getLeft(int padding) const
+const float Room::getLeft(float padding) const
 {
 	return vPosition[0] - nHalfWidth - padding;
 }
 
-const float Room::getRight(int padding) const
+const float Room::getRight(float padding) const
 {
 	return vPosition[0] + nHalfWidth + padding;
 }
 
-bool Room::overlaps(Room& b, int padding)
+bool Room::overlaps(Room& b, float padding)
 {
 	auto a = this;
 	return !((b.getLeft(padding)) >= a->getRight(padding) ||
 		b.getRight(padding) <= (a->getLeft(padding)) ||
 		b.getTop(padding) <= (a->getBottom(padding)) ||
 		(b.getBottom(padding)) >= a->getTop(padding));
+
+	//return
+	//	(
+	//		this->cmpf(a->getRight(padding), b.getLeft(padding)) ||
+	//		this->cmpf(b.getRight(padding), a->getLeft(padding)) ||
+	//		this->cmpf(b.getTop(padding), a->getBottom(padding)) ||
+	//		this->cmpf(a->getTop(), b.getBottom(padding))
+	//		);
 }
 
-bool Room::markIfTrueRoom(int minWidth, int minHeight)
+bool Room::markIfTrueRoom(float minWidth, float minHeight)
 {
 	if (nWidth >= minWidth && nHeight >= minHeight) {
 		this->bConnected = true;
