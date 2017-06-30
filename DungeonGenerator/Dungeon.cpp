@@ -100,6 +100,7 @@ void Dungeon::GenerateDungeon()
 	//Remove disconnected cells from vRooms;
 	for (std::vector<Room*>::iterator it = vRooms.begin(); it != vRooms.end();) {
 		if (!(*it)->isConnected()) {
+			delete *it;
 			it = vRooms.erase(it);
 		}
 		else
@@ -107,9 +108,11 @@ void Dungeon::GenerateDungeon()
 	}
 
 	//clear tileMap and remap it all?
-	markAllTileMap(vCorridorRooms);
+	//markAllTileMap(vCorridorRooms);
 	tileRoomMap.clear();
 	markAllTileMap(vRooms);
+
+	//mark all True Room Walls
 
 }
 

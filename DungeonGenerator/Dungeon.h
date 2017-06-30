@@ -3,13 +3,13 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
-#include "Room.h"
 #include <random>
 #include <time.h>
 #include <math.h>
 #include <iostream>
 #include <algorithm>
 #include <utility>
+#include "Room.h"
 
 extern bool debug_flag;
 
@@ -23,7 +23,6 @@ public:
 	const int getNumCells()const { return nCells; };
 	const std::vector<Room*>& getRooms()const { return vRooms; };
 	const std::map<Room*, std::vector<Room*>>& getGraph()const { return graph; };
-	//const std::map < std::pair<float, float >, bool > & getTileMap()const { return tileMap; };
 	const std::map < std::pair<float, float >, Room* > & getTileMap()const { return tileRoomMap; };
 
 	void generateCellCoordinates();

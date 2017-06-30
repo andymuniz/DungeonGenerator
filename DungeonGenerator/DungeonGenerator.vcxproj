@@ -150,7 +150,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dungeon.cpp" />
-    <ClCompile Include="graphics.h" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Graphics.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Room.cpp" />
   </ItemGroup>
